@@ -12,11 +12,9 @@ function App() {
     };
     return (
         <div className="App">
-
             {!showChat && <Login callback={getName} />}
             {showChat && <Chat name = {name} />}
         </div>
     );
 }
-
 export default App;
