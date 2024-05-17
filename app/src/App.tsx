@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
-import Login from './component/Login'
-import Chat from "./component/Chat";
+import Login from './components/Login'
+import Chat from "./components/Chat";
 
 function App() {
     const [showChat, setShowChat] = useState(false);

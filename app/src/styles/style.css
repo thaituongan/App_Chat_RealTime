@@ -1,0 +1,84 @@
+:root {
+    --b-0: rgba(255, 255, 255, 1);
+    --paragraph: rgba(123, 129, 140, 1);
+}
+
+.input-message {
+    align-items: flex-start;
+    background-color: var(--b-0);
+    border-radius: 8px;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 24px;
+    position: relative;
+}
+
+.input-message .input-message-bar {
+    align-items: center;
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: space-between;
+    position: relative;
+    width: 734px;
+}
+
+.input-message .type-message {
+    align-items: flex-end;
+    display: inline-flex;
+    flex: 0 0 auto;
+    gap: 8px;
+    position: relative;
+}
+
+.input-message .icon-instance-node {
+    height: 20px !important;
+    position: relative !important;
+    width: 20px !important;
+}
+
+.input-message .text-wrapper {
+    color: var(--paragraph);
+    font-family: "Inter-Regular", Helvetica;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: normal;
+    position: relative;
+    white-space: nowrap;
+    width: fit-content;
+}
+
+.input-message .option-frame {
+    align-items: center;
+    display: inline-flex;
+    flex: 0 0 auto;
+    gap: 16px;
+    position: relative;
+}
+
+.input-message .fomat-mess {
+    align-items: flex-start;
+    display: inline-flex;
+    flex: 0 0 auto;
+    gap: 12px;
+    position: relative;
+}
+
+.input-message .line {
+    height: 24px;
+    object-fit: cover;
+    position: relative;
+    width: 1px;
+}
+
+.input-message .send-btn {
+    align-items: flex-start;
+    background-color: #f6f5fa;
+    border-radius: 41px;
+    display: inline-flex;
+    flex: 0 0 auto;
+    gap: 10px;
+    padding: 10px 9px 10px 11px;
+    position: relative;
+}

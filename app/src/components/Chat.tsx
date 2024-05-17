@@ -1,12 +1,13 @@
 import React from 'react';
 import {useState} from "react";
+import {InputMessage} from "./inputMessage";
 interface ChatProps {
     name: string;
 }
 
 function Chat({ name }: ChatProps) {
     // biến nhập tin nhắn
-    const [inputMess, setInpuMess] = useState('')
+    const [InputMess, setInpuMess] = useState('')
     const [message, setMessage] = useState([])
     return (
         <div className='chat-container'>
@@ -18,10 +19,7 @@ function Chat({ name }: ChatProps) {
             </ul>
 
             {/*//khung nhap tin nhan*/}
-            <input type='text' />
-
-            {/*//button send tin nhan*/}
-            <button>Send</button>
+            <InputMessage/>
 
         </div>
     );
