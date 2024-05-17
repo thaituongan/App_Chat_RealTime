@@ -1,6 +1,8 @@
 import React from 'react';
 import {useState} from "react";
 import {InputMessage} from "./inputMessage";
+import {Chatbox} from "./Chatbox";
+import "../styles/style.css";
 interface ChatProps {
     name: string;
 }
@@ -13,13 +15,10 @@ function Chat({ name }: ChatProps) {
         <div className='chat-container'>
             <h1>{name} start chat!</h1>
 
-            {/*tạo list tin nhắn*/}
-            <ul>
-                <li></li>
-            </ul>
-
             {/*//khung nhap tin nhan*/}
-            <InputMessage/>
+                <Chatbox/>
+                <InputMessage/>
+
 
         </div>
     );

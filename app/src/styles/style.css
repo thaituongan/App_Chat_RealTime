@@ -2,6 +2,9 @@
     --b-0: rgba(255, 255, 255, 1);
     --paragraph: rgba(123, 129, 140, 1);
 }
+.chat-container{
+    display: inline-grid;
+}
 
 .input-message {
     align-items: flex-start;
@@ -12,6 +15,17 @@
     gap: 10px;
     padding: 16px 24px;
     position: relative;
+}
+.boxchat-container {
+    align-items: flex-start;
+    border-radius: 2px;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 24px;
+    height: 400px;
+    background: cornflowerblue;
+    text-align: center;
 }
 
 .input-message .input-message-bar {
@@ -82,3 +96,4 @@
     padding: 10px 9px 10px 11px;
     position: relative;
 }
+
