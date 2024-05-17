@@ -22,11 +22,11 @@ export const InputMessage = () => {
                         </div>
                     </div>
                     {/*nut gui tin nhan*/}
-                    <div className="send-btn">
+                    <button className="send-btn">
                         <div className="hi-paper-airplane-screen">
                             <img className="vector" alt="Vector" src="/HiPaperAirplane.jpg"/>
                         </div>
-                    </div>
+                    </button>
                 </div>
             </div>
         </div>
