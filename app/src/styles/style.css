@@ -60,7 +60,11 @@
     line-height: normal;
     position: relative;
     white-space: nowrap;
-    width: fit-content;
+    width: 600px;
+    border-top-style: hidden;
+    border-right-style: hidden;
+    border-left-style: hidden;
+
 }
 
 .input-message .option-frame {

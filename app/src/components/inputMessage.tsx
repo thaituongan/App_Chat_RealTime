@@ -10,7 +10,7 @@ export const InputMessage = () => {
                     <div className="md-attach-file-screen">
                         <img className="attch-icon" alt="Attch icon" src="/MdAttachFile.png"/>
                     </div>
-                    <div className="text-wrapper">Write a message...</div>
+                    <input type='text' placeholder='type message...' className="text-wrapper"></input>
                 </div>
                 <div className="option-frame">
                     <div className="fomat-mess">
