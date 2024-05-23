@@ -1,19 +1,13 @@
 import { useState } from "react";
 import "./App.css";
-import Login from './components/Login'
-import Chat from "./components/Chat";
+import LoginComponent from "./components/LoginComponent";
 
 function App() {
-    const [showChat, setShowChat] = useState(false);
-    const [name, setName] = useState('');
-    const getName = (name: string) => {
-        setName(name);
-        setShowChat(true);
-    };
     return (
         <div className="App">
-            {!showChat && <Login callback={getName} />}
-            {showChat && <Chat name = {name} />}
+            <LoginComponent/>
+            {/*{!showChat && <Login callback={getName} />}*/}
+            {/*{showChat && <Chat name = {name} />}*/}
         </div>
     );
 }

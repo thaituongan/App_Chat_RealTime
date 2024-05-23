@@ -18,10 +18,9 @@ function Chat({ name }: ChatProps) {
             {/*//khung nhap tin nhan*/}
                 <Chatbox/>
                 <InputMessage/>
-
-
         </div>
     );
 }
+
 
 export default Chat;
