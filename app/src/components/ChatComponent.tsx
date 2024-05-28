@@ -3,12 +3,15 @@ import { InputMessage } from "./InputMessage";
 import { Chatbox } from "./Chatbox";
 import '../styles/style.css';
 import WebSocketService from '../websocket/WebSocketService';
+import { useLocation } from "react-router-dom";
 
 interface ChatComponentProps {
     wsService: WebSocketService;
 }
 
 const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
+    const location = useLocation();
+    const [username, setUsername] = useState<string>(location.state.username);
     const [messages, setMessages] = useState<string[]>([]);
     const [input, setInput] = useState<string>('');
 
@@ -20,14 +23,15 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
 
         wsService.onMessage(handleNewMessage);
 
+
         return () => {
-            wsService.close()
+            wsService.getUserList();
         };
     }, [wsService]);
 
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '') {
-            wsService.sendChatMessage('people', 'ti', input);
+            wsService.sendChatMessage('people', 'long', input);
             setInput('');
         } else {
             console.log('WebSocket connection is not open or input is empty');
@@ -40,7 +44,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
 
     return (
         <div>
-            <h1>Chat App</h1>
+            <h1 className='hello-user'>Hello {username}</h1>
             <div className='container'>
                 <div className='chat-container'>
                     <Chatbox messages={messages} />

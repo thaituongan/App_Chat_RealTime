@@ -13,9 +13,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
 
     const handleLogin = () => {
         if (wsService) {
-           // wsService.onLoginSuccess = () => {
-                navigate('/chat');
-           // };
+            // Gửi yêu cầu đăng nhập và xử lý kết quả
             wsService.sendMessage({
                 action: 'onchat',
                 data: {
@@ -24,6 +22,24 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
                         user: username,
                         pass: password
                     }
+                }
+            });
+
+            // Đợi nhận kết quả từ server
+            wsService.onMessage((data: any) => {
+                // Kiểm tra kết quả từ server
+                if (data.status === 'success') {
+                    console.log('Login success');
+                    setUsername(username);
+                    setPassword(password);
+                    // Đăng nhập thành công, chuyển hướng đến trang ChatComponent
+                    navigate('/chat', { state: { username: username } });
+
+                } else {
+                    // Đăng nhập không thành công, xử lý tùy ý
+                    console.log('Login failed');
+                    console.log(data.status)
+                    //console.log(getMessage(data))
                 }
             });
         }

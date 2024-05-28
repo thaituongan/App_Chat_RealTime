@@ -89,42 +89,6 @@ class WebSocketService {
         });
     }
 
-    createRoom(name: string) {
-        this.sendMessage({
-            action: "onchat",
-            data: {
-                event: "CREATE_ROOM",
-                data: {
-                    name
-                }
-            }
-        });
-    }
-
-    joinRoom(name: string) {
-        this.sendMessage({
-            action: "onchat",
-            data: {
-                event: "JOIN_ROOM",
-                data: {
-                    name
-                }
-            }
-        });
-    }
-
-    getRoomChatMessages(name: string, page: number) {
-        this.sendMessage({
-            action: "onchat",
-            data: {
-                event: "GET_ROOM_CHAT_MES",
-                data: {
-                    name,
-                    page
-                }
-            }
-        });
-    }
 
     getPeopleChatMessages(name: string, page: number) {
         this.sendMessage({

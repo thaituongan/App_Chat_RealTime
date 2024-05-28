@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import LoginComponent from './components/LoginComponent';
 import ChatComponent from './components/ChatComponent';
 import WebSocketService from './websocket/WebSocketService';
+
 
 const App: React.FC = () => {
     const [wsService, setWsService] = useState<WebSocketService | null>(null);
