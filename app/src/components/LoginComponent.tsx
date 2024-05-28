@@ -1,12 +1,32 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import WebSocketService from '../websocket/WebSocketService';
 
-const LoginComponent = () => {
+interface LoginComponentProps {
+    wsService: WebSocketService | null;
+}
+
+const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleLogin = () => {
-        WebSocketService.login(username, password);
+        if (wsService) {
+           // wsService.onLoginSuccess = () => {
+                navigate('/chat');
+           // };
+            wsService.sendMessage({
+                action: 'onchat',
+                data: {
+                    event: 'LOGIN',
+                    data: {
+                        user: username,
+                        pass: password
+                    }
+                }
+            });
+        }
     };
 
     return (

@@ -6,7 +6,7 @@ const RegisterComponent = () => {
     const [password, setPassword] = useState('');
 
     const handleRegister = () => {
-        WebSocketService.register(username, password);
+        //WebSocketService.register(username, password);
     };
     return (
         <div>

@@ -1,12 +1,8 @@
 class WebSocketService {
-    constructor() {
-        this.client = null;
-        this.messageQueue = [];
-        this.isConnected = false;
-    }
+    private client: WebSocket;
 
-    connect() {
-        this.client = new WebSocket('ws://140.238.54.136:8080/chat/chat');
+    constructor(url: string) {
+        this.client = new WebSocket(url);
 
         this.client.onopen = () => {
             console.log('WebSocket connection opened');
@@ -21,7 +17,31 @@ class WebSocketService {
         };
     }
 
-    register(user, pass) {
+    sendMessage(message: object) {
+        if (this.client.readyState === WebSocket.OPEN) {
+            this.client.send(JSON.stringify(message));
+        } else {
+            this.client.onopen = () => {
+                this.client.send(JSON.stringify(message));
+            };
+        }
+    }
+
+    onMessage(callback: (data: any) => void) {
+        this.client.onmessage = (event) => {
+            callback(JSON.parse(event.data));
+        };
+    }
+
+    isConnected(): boolean {
+        return this.client.readyState === WebSocket.OPEN;
+    }
+
+    close() {
+        this.client.close();
+    }
+
+    register(user: string, pass: string) {
         this.sendMessage({
             action: "onchat",
             data: {
@@ -34,7 +54,7 @@ class WebSocketService {
         });
     }
 
-    login(user, pass) {
+    login(user: string, pass: string) {
         this.sendMessage({
             action: "onchat",
             data: {
@@ -47,7 +67,7 @@ class WebSocketService {
         });
     }
 
-    reLogin(user, code) {
+    reLogin(user: string, code: string) {
         this.sendMessage({
             action: "onchat",
             data: {
@@ -69,7 +89,7 @@ class WebSocketService {
         });
     }
 
-    createRoom(name) {
+    createRoom(name: string) {
         this.sendMessage({
             action: "onchat",
             data: {
@@ -81,7 +101,7 @@ class WebSocketService {
         });
     }
 
-    joinRoom(name) {
+    joinRoom(name: string) {
         this.sendMessage({
             action: "onchat",
             data: {
@@ -93,7 +113,7 @@ class WebSocketService {
         });
     }
 
-    getRoomChatMessages(name, page) {
+    getRoomChatMessages(name: string, page: number) {
         this.sendMessage({
             action: "onchat",
             data: {
@@ -106,7 +126,7 @@ class WebSocketService {
         });
     }
 
-    getPeopleChatMessages(name, page) {
+    getPeopleChatMessages(name: string, page: number) {
         this.sendMessage({
             action: "onchat",
             data: {
@@ -119,7 +139,7 @@ class WebSocketService {
         });
     }
 
-    sendChatMessage(type, to, mes) {
+    sendChatMessage(type: string, to: string, mes: string) {
         this.sendMessage({
             action: "onchat",
             data: {
@@ -133,7 +153,7 @@ class WebSocketService {
         });
     }
 
-    checkUser(user) {
+    checkUser(user: string) {
         this.sendMessage({
             action: "onchat",
             data: {
@@ -153,22 +173,6 @@ class WebSocketService {
             }
         });
     }
-
-    sendMessage(message) {
-        if (this.client && this.client.readyState === WebSocket.OPEN) {
-            this.client.send(JSON.stringify(message));
-        } else {
-            this.client.onopen = () => {
-                this.client.send(JSON.stringify(message));
-            };
-        }
-    }
-
-    onMessage(callback) {
-        this.client.onmessage = (event) => {
-            callback(JSON.parse(event.data));
-        };
-    }
 }
 
-export default new WebSocketService();
+export default WebSocketService;
