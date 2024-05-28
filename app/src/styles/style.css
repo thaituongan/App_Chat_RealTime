@@ -4,6 +4,14 @@
 }
 .chat-container{
     display: inline-grid;
+    align-items: center;
+
+}
+.hello-user{
+    text-align: center;
+}
+.container{
+    text-align: center;
 }
 
 .input-message {

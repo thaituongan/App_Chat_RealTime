@@ -1,20 +1,33 @@
-import { useState } from "react";
-import "./App.css";
-import Login from './components/Login'
-import Chat from "./components/Chat";
+import React, { useEffect, useState } from 'react';
+import { Route, Routes, Navigate } from 'react-router-dom';
+import LoginComponent from './components/LoginComponent';
+import ChatComponent from './components/ChatComponent';
+import WebSocketService from './websocket/WebSocketService';
 
-function App() {
-    const [showChat, setShowChat] = useState(false);
-    const [name, setName] = useState('');
-    const getName = (name: string) => {
-        setName(name);
-        setShowChat(true);
-    };
+
+const App: React.FC = () => {
+    const [wsService, setWsService] = useState<WebSocketService | null>(null);
+
+    useEffect(() => {
+        const service = new WebSocketService('ws://140.238.54.136:8080/chat/chat');
+        setWsService(service);
+
+        return () => {
+            if (service) {
+                service.close();
+            }
+        };
+    }, []);
+
     return (
-        <div className="App">
-            {!showChat && <Login callback={getName} />}
-            {showChat && <Chat name = {name} />}
-        </div>
+        <Routes>
+
+                <Route path="/" element={<Navigate to="/login" />} />
+                <Route path="/login" element={<LoginComponent wsService={wsService} />} />
+                {wsService && <Route path="/chat" element={<ChatComponent wsService={wsService} />} />}
+
+        </Routes>
     );
-}
+};
+
 export default App;
