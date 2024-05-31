@@ -3,6 +3,7 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import LoginComponent from './components/LoginComponent';
 import ChatComponent from './components/ChatComponent';
 import WebSocketService from './websocket/WebSocketService';
+import RegisterComponent from "./components/RegisterComponent";
 
 
 const App: React.FC = () => {
@@ -24,6 +25,7 @@ const App: React.FC = () => {
 
                 <Route path="/" element={<Navigate to="/login" />} />
                 <Route path="/login" element={<LoginComponent wsService={wsService} />} />
+                <Route path="/register" element={<RegisterComponent wsService={wsService} />} />
                 {wsService && <Route path="/chat" element={<ChatComponent wsService={wsService} />} />}
 
         </Routes>
