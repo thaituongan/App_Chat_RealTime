@@ -41,7 +41,8 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
                 } else {
                     console.log('Login failed');
                     console.log(data.status)
-                    //console.log(getMessage(data))
+                   alert('Login failed! try agian?')
+
                 }
             });
         }
