@@ -1,9 +1,24 @@
 class WebSocketService {
+    
     private client: WebSocket;
 
     constructor(url: string) {
         this.client = new WebSocket(url);
 
+        // this.client.onopen = () => {
+        //     console.log('WebSocket connection opened');
+        // };
+
+        // this.client.onclose = () => {
+        //     console.log('WebSocket connection closed');
+        // };
+
+        // this.client.onerror = (error) => {
+        //     console.error('WebSocket error:', error);
+        // };
+    }
+
+    private createConnection() {
         this.client.onopen = () => {
             console.log('WebSocket connection opened');
         };
@@ -20,6 +35,7 @@ class WebSocketService {
     sendMessage(message: object) {
         if (this.client.readyState === WebSocket.OPEN) {
             this.client.send(JSON.stringify(message));
+            console.log("open");
         } else {
             this.client.onopen = () => {
                 this.client.send(JSON.stringify(message));
@@ -55,16 +71,17 @@ class WebSocketService {
     }
 
     login(user: string, pass: string) {
-        this.sendMessage({
-            action: "onchat",
-            data: {
-                event: "LOGIN",
+        this.createConnection();
+            this.sendMessage({
+                action: "onchat",
                 data: {
-                    user,
-                    pass
+                    event: "LOGIN",
+                    data: {
+                        user,
+                        pass
+                    }
                 }
-            }
-        });
+            });
     }
 
     reLogin(user: string, code: string) {
@@ -87,6 +104,7 @@ class WebSocketService {
                 event: "LOGOUT"
             }
         });
+        this.close();
     }
 
 
