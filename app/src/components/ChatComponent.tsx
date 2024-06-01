@@ -4,6 +4,9 @@ import { Chatbox } from "./Chatbox";
 import '../styles/style.css';
 import WebSocketService from '../websocket/WebSocketService';
 import { useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import { addMessage, setMessages } from '../reducer/chatSlice';
 
 interface ChatComponentProps {
     wsService: WebSocketService;
@@ -11,23 +14,23 @@ interface ChatComponentProps {
 
 const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const location = useLocation();
-    const [username, setUsername] = useState<string>(location.state.username);
-    const [messages, setMessages] = useState<string[]>([]);
+    const dispatch = useDispatch();
+    const username = useSelector((state: RootState) => state.user.username);
+    const messages = useSelector((state: RootState) => state.chat.messages);
     const [input, setInput] = useState<string>('');
 
     useEffect(() => {
         const handleNewMessage = (data: any) => {
             const newMessage = JSON.stringify(data);
-            setMessages(prevMessages => [...prevMessages, newMessage]);
+            dispatch(addMessage(newMessage));
         };
 
         wsService.onMessage(handleNewMessage);
 
-
         return () => {
             wsService.getUserList();
         };
-    }, [wsService]);
+    }, [wsService, dispatch]);
 
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '') {

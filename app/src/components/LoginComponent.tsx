@@ -1,20 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login } from '../reducer/userSlice';
 import WebSocketService from '../websocket/WebSocketService';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 interface LoginComponentProps {
     wsService: WebSocketService | null;
 }
 
 const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const handleToRegister = () =>{
-        navigate('/register')
-    }
+    const handleToRegister = () => {
+        navigate('/register');
+    };
+
     const handleLogin = () => {
         if (wsService) {
             wsService.sendMessage({
@@ -23,26 +26,19 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
                     event: 'LOGIN',
                     data: {
                         user: username,
-                        pass: password
-                    }
-                }
+                        pass: password,
+                    },
+                },
             });
 
-            // Đợi nhận kết quả từ server
             wsService.onMessage((data: any) => {
-                // Kiểm tra kết quả từ server
                 if (data.status === 'success') {
-                    console.log('Login success');
-                    setUsername(username);
-                    setPassword(password);
-                    // Đăng nhập thành công thì chuyển hướng đến trang ChatComponent
-                    navigate('/chat', { state: { username: username } });
-
+                    dispatch(login({ username }));
+                    navigate('/chat', { state: { username } });
                 } else {
                     console.log('Login failed');
-                    console.log(data.status)
-                   alert('Login failed! try agian?')
-
+                    console.log(data.status);
+                    alert('Login failed')
                 }
             });
         }
@@ -63,7 +59,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
                                     className="form-control"
                                     placeholder="Username"
                                     value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
                                 />
                             </div>
                             <div className="form-group">
@@ -74,7 +70,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
                                     className="form-control"
                                     placeholder="Password"
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                                 />
                             </div>
                             <div className="text-center mt-3">
@@ -82,8 +78,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
                             </div>
                             <div className="text-center mt-3">
                                 <p>
-                                    No account?{' '}
-                                    <a href="#" onClick={handleToRegister}>Register</a>
+                                    No account? <a href="#" onClick={handleToRegister}>Register</a>
                                 </p>
                             </div>
                         </div>
