@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WebSocketService from '../websocket/WebSocketService';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 interface RegisterComponentProps {
     wsService: WebSocketService | null;
 }
 
 const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
+    const [username, setUsername] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [confirmPassword, setConfirmPassword] = useState<string>('');
+    const [error, setError] = useState<string>('');
     const navigate = useNavigate();
 
     const handleRegister = () => {
@@ -27,14 +26,12 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
                     event: 'REGISTER',
                     data: {
                         user: username,
-                        pass: password
-                    }
-                }
+                        pass: password,
+                    },
+                },
             });
 
-
             wsService.onMessage((data: any) => {
-                // Kiểm tra kết quả từ server
                 if (data.status === 'success') {
                     console.log('Registration success');
                     navigate('/login'); // Chuyển hướng đến trang đăng nhập sau khi đăng ký thành công
@@ -61,7 +58,7 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
                                     className="form-control"
                                     placeholder="Username"
                                     value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
                                 />
                             </div>
                             <div className="form-group">
@@ -72,7 +69,7 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
                                     className="form-control"
                                     placeholder="Password"
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                                 />
                             </div>
                             <div className="form-group">
@@ -83,17 +80,12 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
                                     className="form-control"
                                     placeholder="Confirm Password"
                                     value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
                                 />
                             </div>
-                            {error && <p className="text-danger">{error}</p>}
+                            {error && <p style={{ color: 'red' }}>{error}</p>}
                             <div className="text-center mt-3">
                                 <button className="btn btn-primary" onClick={handleRegister}>Register</button>
-                            </div>
-                            <div className="text-center mt-3">
-                                <p>
-                                    Already have an account? <a href="/login">Login</a>
-                                </p>
                             </div>
                         </div>
                     </div>
