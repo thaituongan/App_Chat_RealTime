@@ -1,24 +1,16 @@
 class WebSocketService {
     
-    private client: WebSocket;
+    private client: WebSocket | null = null;
+    private url: string;
 
     constructor(url: string) {
-        this.client = new WebSocket(url);
-
-        // this.client.onopen = () => {
-        //     console.log('WebSocket connection opened');
-        // };
-
-        // this.client.onclose = () => {
-        //     console.log('WebSocket connection closed');
-        // };
-
-        // this.client.onerror = (error) => {
-        //     console.error('WebSocket error:', error);
-        // };
+        this.url = url;
+        this.createConnection();  // Khởi tạo kết nối ngay khi tạo đối tượng
     }
 
     private createConnection() {
+        this.client = new WebSocket(this.url);
+
         this.client.onopen = () => {
             console.log('WebSocket connection opened');
         };
@@ -33,28 +25,37 @@ class WebSocketService {
     }
 
     sendMessage(message: object) {
-        if (this.client.readyState === WebSocket.OPEN) {
+        if (this.client && this.client.readyState === WebSocket.OPEN) {
             this.client.send(JSON.stringify(message));
-            console.log("open");
         } else {
-            this.client.onopen = () => {
-                this.client.send(JSON.stringify(message));
+            console.log("WebSocket is not open, attempting to resend...");
+            this.client?.close();
+            this.createConnection();
+            this.client!.onopen = () => {
+                this.client!.send(JSON.stringify(message));
             };
         }
     }
 
     onMessage(callback: (data: any) => void) {
-        this.client.onmessage = (event) => {
-            callback(JSON.parse(event.data));
-        };
+        if (this.client) {
+            this.client.onmessage = (event) => {
+                callback(JSON.parse(event.data));
+            };
+        }
     }
 
     isConnected(): boolean {
-        return this.client.readyState === WebSocket.OPEN;
+        return this.client ? this.client.readyState === WebSocket.OPEN : false;
     }
 
     close() {
-        this.client.close();
+        this.client?.close();
+    }
+
+    initializeNewConnection() {
+        this.close();  // Đóng kết nối hiện tại nếu có
+        this.createConnection();  // Tạo kết nối mới
     }
 
     register(user: string, pass: string) {
@@ -147,14 +148,42 @@ class WebSocketService {
         });
     }
 
+    //name:string,type:boolean,actionTime:string
     getUserList() {
         this.sendMessage({
             action: "onchat",
             data: {
-                event: "GET_USER_LIST"
+                event: "GET_USER_LIST",
+                // data: {
+                //     name,
+                //     type,
+                //     actionTime
+                // }
             }
         });
     }
+    // getUserList(): Promise<[]> {
+    //     return new Promise((resolve, reject) => {
+    //         this.sendMessage({
+    //             action: "onchat",
+    //             data: {
+    //                 event: "GET_USER_LIST"
+    //             }
+    //         });
+
+    //         this.onMessage((data) => {
+    //             if (data.event === "GET_USER_LIST") {
+    //                 resolve(data.data.users);
+    //             } else {
+    //                 reject(new Error("Failed to get user list"));
+    //             }
+    //         });
+
+    //         this.client!.onerror = (error) => {
+    //             reject(new Error('WebSocket error: ' + error));
+    //         };
+    //     });
+    // }
 }
 
 export default WebSocketService;
