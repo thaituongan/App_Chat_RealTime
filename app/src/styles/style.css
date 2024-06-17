@@ -21,6 +21,7 @@
     display: flex;
     gap: 10px;
     padding: 16px 24px;
+    border: black 1px solid;
 }
 
 .input-message .input-message-bar {
@@ -34,6 +35,7 @@
     align-items: center;
     display: flex;
     gap: 8px;
+    width: 95%;
 }
 
 .input-message .text-wrapper {
@@ -43,7 +45,7 @@
     font-weight: 400;
     border: none;
     outline: none;
-    width: 100%;
+    width: 95%;
 }
 
 .input-message .option-frame {
@@ -76,6 +78,7 @@
     margin-bottom: 5px;
     border-radius: 5px;
     background-color: #f1f1f1;
+    min-height: 500px;
 }
 
 .chatbox-container {
