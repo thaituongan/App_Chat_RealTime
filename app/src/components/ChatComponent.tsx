@@ -1,3 +1,4 @@
+
     import React, { ChangeEvent, useEffect, useState } from "react";
     import { InputMessage } from "./InputMessage";
     import { Chatbox } from "./Chatbox";
@@ -26,8 +27,8 @@
                 const newMessage = JSON.stringify(data);
                 dispatch(addMessage(newMessage));
             };
-
             wsService.onMessage(handleNewMessage);
+
 
             return () => {
                 wsService.getUserList();
@@ -48,6 +49,7 @@
                 console.log('WebSocket connection is not open or input is empty');
             }
         };
+
 
         const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
             setInput(event.target.value);

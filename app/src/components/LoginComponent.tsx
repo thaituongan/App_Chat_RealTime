@@ -37,9 +37,8 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
                     navigate('/chat', { state: { username } });
                 } else {
                     console.log('Login failed');
-                    console.log(data.status)
-                   alert('Login failed! try agian?')
-
+                    console.log(data.status);
+                    alert('Login failed')
                 }
             });
         }
