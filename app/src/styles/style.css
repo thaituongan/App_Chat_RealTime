@@ -60,30 +60,51 @@
     gap: 12px;
 }
 
-.input-message .send-btn {
-    background-color: #ffffff;
-    border: none;
-    border-radius: 41px;
-    color: #fff;
-    display: flex;
-    padding: 10px;
+/*.input-message .send-btn {*/
+/*    background-color: #ffffff;*/
+/*    border: none;*/
+/*    border-radius: 41px;*/
+/*    color: #fff;*/
+/*    display: flex;*/
+/*    padding: 10px;*/
+/*}*/
+/*.input-message .send-btn :hover {*/
+/*    background-color: #ffffff;*/
+/*    border: 1px black solid;*/
+/*    border-radius: 41px;*/
+/*    color: #fff;*/
+/*    display: flex;*/
+/*    padding: 10px;*/
+/*}*/
+
+.send-btn{
+    border-radius: 50%;
+    border: 3px white solid;
+}
+.send-btn:hover{
+    border-radius: 50%;
+    border: 3px #6d64ed solid;
 }
 
 .input-message-container {
     padding: 10px 0;
+
 }
 
 .message {
     padding: 5px 10px;
-    margin-bottom: 5px;
+    margin: 5px 10px 5px 10px;
     border-radius: 5px;
-    background-color: #f1f1f1;
-    min-height: 500px;
+    background-color: #295c9f;
+    color: white;
 }
 
 .chatbox-container {
     flex-grow: 1;
     overflow-y: auto;
+    min-height: 400px;
+    border: black 1px solid;
+    border-radius: 2px;
 }
 
 .option-frame .send-btn img {

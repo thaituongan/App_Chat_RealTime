@@ -18,7 +18,7 @@ const LogoutComponent: React.FC<LogoutComponentProps> = ({ wsService }) => {
     };
 
     return (
-        <button className="btn btn-danger" onClick={handleLogout}>
+        <button className="btn btn-dark" onClick={handleLogout}>
             Logout
         </button>
     );
