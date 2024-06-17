@@ -148,14 +148,42 @@ class WebSocketService {
         });
     }
 
+    //name:string,type:boolean,actionTime:string
     getUserList() {
         this.sendMessage({
             action: "onchat",
             data: {
-                event: "GET_USER_LIST"
+                event: "GET_USER_LIST",
+                // data: {
+                //     name,
+                //     type,
+                //     actionTime
+                // }
             }
         });
     }
+    // getUserList(): Promise<[]> {
+    //     return new Promise((resolve, reject) => {
+    //         this.sendMessage({
+    //             action: "onchat",
+    //             data: {
+    //                 event: "GET_USER_LIST"
+    //             }
+    //         });
+
+    //         this.onMessage((data) => {
+    //             if (data.event === "GET_USER_LIST") {
+    //                 resolve(data.data.users);
+    //             } else {
+    //                 reject(new Error("Failed to get user list"));
+    //             }
+    //         });
+
+    //         this.client!.onerror = (error) => {
+    //             reject(new Error('WebSocket error: ' + error));
+    //         };
+    //     });
+    // }
 }
 
 export default WebSocketService;
