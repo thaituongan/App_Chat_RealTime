@@ -2,110 +2,88 @@
     --b-0: rgba(255, 255, 255, 1);
     --paragraph: rgba(123, 129, 140, 1);
 }
-.chat-container{
-    display: inline-grid;
-    align-items: center;
 
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
 }
-.hello-user{
-    text-align: center;
-}
-.container{
+
+.hello-user {
     text-align: center;
 }
 
 .input-message {
-    align-items: flex-start;
+    align-items: center;
     background-color: var(--b-0);
     border-radius: 8px;
-    display: inline-flex;
-    flex-direction: column;
+    display: flex;
     gap: 10px;
     padding: 16px 24px;
-    position: relative;
-}
-.boxchat-container {
-    align-items: flex-start;
-    border-radius: 2px;
-    display: inline-flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 16px 24px;
-    height: 400px;
-    background: cornflowerblue;
-    text-align: center;
 }
 
 .input-message .input-message-bar {
     align-items: center;
     display: flex;
-    flex: 0 0 auto;
     justify-content: space-between;
-    position: relative;
-    width: 734px;
+    width: 100%;
 }
 
 .input-message .type-message {
-    align-items: flex-end;
-    display: inline-flex;
-    flex: 0 0 auto;
+    align-items: center;
+    display: flex;
     gap: 8px;
-    position: relative;
-}
-
-.input-message .icon-instance-node {
-    height: 20px !important;
-    position: relative !important;
-    width: 20px !important;
 }
 
 .input-message .text-wrapper {
     color: var(--paragraph);
-    font-family: "Inter-Regular", Helvetica;
+    font-family: "Inter-Regular", Helvetica, Arial, sans-serif;
     font-size: 16px;
     font-weight: 400;
-    letter-spacing: 0;
-    line-height: normal;
-    position: relative;
-    white-space: nowrap;
-    width: 600px;
-    border-top-style: hidden;
-    border-right-style: hidden;
-    border-left-style: hidden;
-
+    border: none;
+    outline: none;
+    width: 100%;
 }
 
 .input-message .option-frame {
     align-items: center;
-    display: inline-flex;
-    flex: 0 0 auto;
+    display: flex;
     gap: 16px;
-    position: relative;
 }
 
 .input-message .fomat-mess {
-    align-items: flex-start;
-    display: inline-flex;
-    flex: 0 0 auto;
+    align-items: center;
+    display: flex;
     gap: 12px;
-    position: relative;
-}
-
-.input-message .line {
-    height: 24px;
-    object-fit: cover;
-    position: relative;
-    width: 1px;
 }
 
 .input-message .send-btn {
-    align-items: flex-start;
-    background-color: #f6f5fa;
+    background-color: #ffffff;
+    border: none;
     border-radius: 41px;
-    display: inline-flex;
-    flex: 0 0 auto;
-    gap: 10px;
-    padding: 10px 9px 10px 11px;
-    position: relative;
+    color: #fff;
+    display: flex;
+    padding: 10px;
 }
 
+.input-message-container {
+    padding: 10px 0;
+}
+
+.message {
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    background-color: #f1f1f1;
+}
+
+.chatbox-container {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.option-frame .send-btn img {
+    width: 20px;
+    height: 20px;
+}

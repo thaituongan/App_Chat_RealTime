@@ -5,7 +5,6 @@ import ChatComponent from './components/ChatComponent';
 import WebSocketService from './websocket/WebSocketService';
 import RegisterComponent from "./components/RegisterComponent";
 
-
 const App: React.FC = () => {
     const [wsService, setWsService] = useState<WebSocketService | null>(null);
 
@@ -22,12 +21,10 @@ const App: React.FC = () => {
 
     return (
         <Routes>
-
-                <Route path="/" element={<Navigate to="/login" />} />
-                <Route path="/login" element={<LoginComponent wsService={wsService} />} />
-                <Route path="/register" element={<RegisterComponent wsService={wsService} />} />
-                {wsService && <Route path="/chat" element={<ChatComponent wsService={wsService} />} />}
-
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/login" element={<LoginComponent wsService={wsService} />} />
+            <Route path="/register" element={<RegisterComponent wsService={wsService} />} />
+            {wsService && <Route path="/chat" element={<ChatComponent wsService={wsService} />} />}
         </Routes>
     );
 };

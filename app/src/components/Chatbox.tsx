@@ -7,7 +7,7 @@ interface ChatboxProps {
 
 export const Chatbox: FC<ChatboxProps> = ({ messages }) => {
     return (
-        <div className="boxchat-container">
+        <div className="chatbox-container">
             <div className="chatbox">
                 {messages.map((message, index) => (
                     <div key={index} className="message">
