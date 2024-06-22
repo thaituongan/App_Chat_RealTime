@@ -19,9 +19,9 @@ class WebSocketService {
             console.log('WebSocket connection closed');
         };
 
-        this.client.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
+        // this.client.onerror = (error) => {
+        //     console.error('WebSocket error:', error);
+        // };
     }
 
     sendMessage(message: object) {
@@ -54,8 +54,8 @@ class WebSocketService {
     }
 
     initializeNewConnection() {
-        this.close();  // Đóng kết nối hiện tại nếu có
-        this.createConnection();  // Tạo kết nối mới
+        this.close(); 
+        this.createConnection();  
     }
 
     register(user: string, pass: string) {
@@ -154,36 +154,9 @@ class WebSocketService {
             action: "onchat",
             data: {
                 event: "GET_USER_LIST",
-                // data: {
-                //     name,
-                //     type,
-                //     actionTime
-                // }
             }
         });
     }
-    // getUserList(): Promise<[]> {
-    //     return new Promise((resolve, reject) => {
-    //         this.sendMessage({
-    //             action: "onchat",
-    //             data: {
-    //                 event: "GET_USER_LIST"
-    //             }
-    //         });
-
-    //         this.onMessage((data) => {
-    //             if (data.event === "GET_USER_LIST") {
-    //                 resolve(data.data.users);
-    //             } else {
-    //                 reject(new Error("Failed to get user list"));
-    //             }
-    //         });
-
-    //         this.client!.onerror = (error) => {
-    //             reject(new Error('WebSocket error: ' + error));
-    //         };
-    //     });
-    // }
 }
 
 export default WebSocketService;
