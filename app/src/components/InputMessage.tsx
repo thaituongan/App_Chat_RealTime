@@ -34,7 +34,7 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
                             </div>
                         </div>
                         {/* Send button */}
-                        <button className="btn btn-primary send-btn" onClick={onSendMessage}>
+                        <button className="btn btn-primary send-btn bg-white border-opacity-10 " onClick={onSendMessage}>
                             <img className="vector" alt="Send" src="/HiPaperAirplane.jpg"/>
                         </button>
                     </div>
