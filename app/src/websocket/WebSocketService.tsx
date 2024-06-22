@@ -2,7 +2,7 @@ class WebSocketService {
     
     private client: WebSocket | null = null;
     private url: string;
-
+    private reLoginCode: string | null = null;
     constructor(url: string) {
         this.url = url;
         this.createConnection();  // Khởi tạo kết nối ngay khi tạo đối tượng
