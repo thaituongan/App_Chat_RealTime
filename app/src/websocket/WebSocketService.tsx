@@ -1,11 +1,22 @@
 class WebSocketService {
-    
     private client: WebSocket | null = null;
     private url: string;
-    private reLoginCode: string | null = null;
+    public reLoginCode: string | null = null;
+    private user: string | null = null;
+    private pass: string | null = null;
+    private reconnectTimeout: number | null = null;
+
     constructor(url: string) {
         this.url = url;
-        this.createConnection();  // Khởi tạo kết nối ngay khi tạo đối tượng
+        this.createConnection();
+    }
+
+    public setReLoginCode(code: string | null) {
+        this.reLoginCode = code;
+    }
+
+    public setUser(user: string | null) {
+        this.user = user;
     }
 
     private createConnection() {
@@ -13,14 +24,26 @@ class WebSocketService {
 
         this.client.onopen = () => {
             console.log('WebSocket connection opened');
+            if (this.reLoginCode && this.user) {
+                this.reLogin(this.user, this.reLoginCode);
+                console.log('Re-login with code:', this.reLoginCode);
+            }
         };
 
         this.client.onclose = () => {
             console.log('WebSocket connection closed');
+            this.reconnectTimeout = window.setTimeout(() => this.createConnection(), 3000); // Retry connection after 3 seconds
         };
 
         this.client.onerror = (error) => {
             console.error('WebSocket error:', error);
+        };
+
+        this.client.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.event === "RE_LOGIN" && data.status === "success") {
+                this.reLoginCode = data.data.RE_LOGIN_CODE;
+            }
         };
     }
 
@@ -51,11 +74,15 @@ class WebSocketService {
 
     close() {
         this.client?.close();
+        if (this.reconnectTimeout) {
+            clearTimeout(this.reconnectTimeout);
+            this.reconnectTimeout = null;
+        }
     }
 
     initializeNewConnection() {
-        this.close();  // Đóng kết nối hiện tại nếu có
-        this.createConnection();  // Tạo kết nối mới
+        this.close();
+        this.createConnection();
     }
 
     register(user: string, pass: string) {
@@ -72,17 +99,18 @@ class WebSocketService {
     }
 
     login(user: string, pass: string) {
-        this.createConnection();
-            this.sendMessage({
-                action: "onchat",
+        this.user = user;
+        this.pass = pass;
+        this.sendMessage({
+            action: "onchat",
+            data: {
+                event: "LOGIN",
                 data: {
-                    event: "LOGIN",
-                    data: {
-                        user,
-                        pass
-                    }
+                    user,
+                    pass
                 }
-            });
+            }
+        });
     }
 
     reLogin(user: string, code: string) {
@@ -107,7 +135,6 @@ class WebSocketService {
         });
         this.close();
     }
-
 
     getPeopleChatMessages(name: string, page: number) {
         this.sendMessage({
@@ -148,42 +175,14 @@ class WebSocketService {
         });
     }
 
-    //name:string,type:boolean,actionTime:string
     getUserList() {
         this.sendMessage({
             action: "onchat",
             data: {
-                event: "GET_USER_LIST",
-                // data: {
-                //     name,
-                //     type,
-                //     actionTime
-                // }
+                event: "GET_USER_LIST"
             }
         });
     }
-    // getUserList(): Promise<[]> {
-    //     return new Promise((resolve, reject) => {
-    //         this.sendMessage({
-    //             action: "onchat",
-    //             data: {
-    //                 event: "GET_USER_LIST"
-    //             }
-    //         });
-
-    //         this.onMessage((data) => {
-    //             if (data.event === "GET_USER_LIST") {
-    //                 resolve(data.data.users);
-    //             } else {
-    //                 reject(new Error("Failed to get user list"));
-    //             }
-    //         });
-
-    //         this.client!.onerror = (error) => {
-    //             reject(new Error('WebSocket error: ' + error));
-    //         };
-    //     });
-    // }
 }
 
 export default WebSocketService;

@@ -33,7 +33,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
 
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '') {
-            wsService.sendChatMessage('people', 'thaituongan', input);
+            wsService.sendChatMessage('people', username, input);
             setInput('');
         } else {
             console.log('WebSocket connection is not open or input is empty');
