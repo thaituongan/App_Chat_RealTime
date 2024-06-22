@@ -19,9 +19,9 @@ class WebSocketService {
             console.log('WebSocket connection closed');
         };
 
-        this.client.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
+        // this.client.onerror = (error) => {
+        //     console.error('WebSocket error:', error);
+        // };
     }
 
     sendMessage(message: object) {

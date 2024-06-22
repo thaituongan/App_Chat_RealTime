@@ -7,6 +7,8 @@ import WebSocketService from '../websocket/WebSocketService';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { addMessage } from '../reducer/chatSlice';
+import UserListComponent from "./UserListComponent";
+import { setUserList } from "../reducer/userListSlice";
 
 interface ChatComponentProps {
     wsService: WebSocketService;
@@ -22,12 +24,18 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         const handleNewMessage = (data: any) => {
             const newMessage = JSON.stringify(data);
             dispatch(addMessage(newMessage));
+
+            if(data.event === "GET_USER_LIST"){
+                dispatch(setUserList(data.data));
+            }
         };
 
         wsService.onMessage(handleNewMessage);
+        // wsService.getUserList();
 
         return () => {
             wsService.getUserList();
+            // wsService.close();
         };
     }, [wsService, dispatch]);
 
@@ -57,7 +65,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                             onSendMessage={handleSendMessage}
                         />
                     </div>
+                   
                 </div>
+            </div>
+            <div className='col-md-4'>
+                        <UserListComponent wsService={wsService} />
             </div>
         </div>
     );

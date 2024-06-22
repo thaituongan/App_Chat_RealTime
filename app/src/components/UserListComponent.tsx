@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
-import WebSocketService from '../websocket/WebSocketService';
 import { setUserList } from '../reducer/userListSlice';
+import WebSocketService from '../websocket/WebSocketService';
 
 interface UserListComponentProps {
     wsService: WebSocketService;
@@ -13,28 +13,28 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService }) => {
     const users = useSelector((state: RootState) => state.userList.users);
 
     useEffect(() => {
-        const handleNewUserList = (data: any) => {
-            if (data.event === "GET_USER_LIST") {
+        const handleUserList = (data: any) => {
+            if (data.event === "GET_USER_LIST" && data.status === "success") {
                 dispatch(setUserList(data.data));
             }
         };
 
-        wsService.onMessage(handleNewUserList);
-
-        wsService.getUserList();
+        wsService.onMessage(handleUserList);
+        // wsService.getUserList();
 
         return () => {
-            wsService.close();
+            wsService.getUserList();
+            // wsService.close();
         };
     }, [wsService, dispatch]);
 
     return (
-        <div>
-            <h3>Users</h3>
+        <div className="user-list">
+            <h3>User List</h3>
             <ul>
-                {users.map((user) => (
+                {users.map(user => (
                     <li key={user.name}>
-                        {user.name} - Last Active: {user.actionTime} - type: {user.type} 
+                        name: {user.name} - type: {user.type} - action time: {user.actionTime}
                     </li>
                 ))}
             </ul>
