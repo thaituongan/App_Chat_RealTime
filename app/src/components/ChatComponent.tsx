@@ -7,6 +7,8 @@ import WebSocketService from '../websocket/WebSocketService';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { addMessage } from '../reducer/chatSlice';
+import { setUserList } from "../reducer/userListSlice";
+import UserListComponent from './UserListComponent';
 
 interface ChatComponentProps {
     wsService: WebSocketService;
@@ -22,18 +24,22 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         const handleNewMessage = (data: any) => {
             const newMessage = JSON.stringify(data);
             dispatch(addMessage(newMessage));
+
+            if (data.event === "GET_USER_LIST") {
+                dispatch(setUserList(data.data));
+            }
         };
 
         wsService.onMessage(handleNewMessage);
-
+        wsService.getUserList();
         return () => {
-            wsService.getUserList();
+            wsService.close();
         };
     }, [wsService, dispatch]);
 
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '') {
-            wsService.sendChatMessage('people', 'long', input);
+            wsService.sendChatMessage('people', 'moclan01', input);
             setInput('');
         } else {
             console.log('WebSocket connection is not open or input is empty');
@@ -49,13 +55,16 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
             <HeaderChat username={username} wsService={wsService} />
             <div className='container mt-3'>
                 <div className='row'>
-                    <div className='col-md-12 chat-container'>
+                    <div className='col-md-8 chat-container'>
                         <Chatbox messages={messages} />
                         <InputMessage
                             input={input}
                             onInputChange={handleChange}
                             onSendMessage={handleSendMessage}
                         />
+                    </div>
+                    <div className='col-md-4'>
+                        <UserListComponent wsService={wsService} />
                     </div>
                 </div>
             </div>
