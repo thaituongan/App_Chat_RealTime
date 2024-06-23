@@ -1,22 +1,10 @@
 class WebSocketService {
     private client: WebSocket | null = null;
     private url: string;
-    public reLoginCode: string | null = null;
-    private user: string | null = null;
-    private pass: string | null = null;
-    private reconnectTimeout: number | null = null;
 
     constructor(url: string) {
         this.url = url;
-        this.createConnection();
-    }
-
-    public setReLoginCode(code: string | null) {
-        this.reLoginCode = code;
-    }
-
-    public setUser(user: string | null) {
-        this.user = user;
+        this.createConnection();  // Khởi tạo kết nối ngay khi tạo đối tượng
     }
 
     private createConnection() {
@@ -24,32 +12,16 @@ class WebSocketService {
 
         this.client.onopen = () => {
             console.log('WebSocket connection opened');
-            if (this.reLoginCode && this.user) {
-                this.reLogin(this.user, this.reLoginCode);
-                console.log('Re-login with code:', this.reLoginCode);
-            }
         };
 
         this.client.onclose = () => {
             console.log('WebSocket connection closed');
-            this.reconnectTimeout = window.setTimeout(() => this.createConnection(), 3000); // Retry connection after 3 seconds
         };
 
-
-        this.client.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
-
-
-        this.client.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.event === "RE_LOGIN" && data.status === "success") {
-                this.reLoginCode = data.data.RE_LOGIN_CODE;
-            }
-        };
-
+        // this.client.onerror = (error) => {
+        //     console.error('WebSocket error:', error);
+        // };
     }
-
     sendMessage(message: object) {
         if (this.client && this.client.readyState === WebSocket.OPEN) {
             this.client.send(JSON.stringify(message));
@@ -77,10 +49,6 @@ class WebSocketService {
 
     close() {
         this.client?.close();
-        if (this.reconnectTimeout) {
-            clearTimeout(this.reconnectTimeout);
-            this.reconnectTimeout = null;
-        }
     }
 
     initializeNewConnection() {
@@ -102,8 +70,7 @@ class WebSocketService {
     }
 
     login(user: string, pass: string) {
-        this.user = user;
-        this.pass = pass;
+        this.createConnection();
         this.sendMessage({
             action: "onchat",
             data: {
@@ -139,6 +106,7 @@ class WebSocketService {
         this.close();
     }
 
+
     getPeopleChatMessages(name: string, page: number) {
         this.sendMessage({
             action: "onchat",
@@ -166,6 +134,7 @@ class WebSocketService {
         });
     }
 
+
     checkUser(user: string) {
         this.sendMessage({
             action: "onchat",
@@ -177,13 +146,23 @@ class WebSocketService {
             }
         });
     }
+    //lay danh sach user co phan trang
+    getUserListOnPage(page: number = 1) {
+        this.sendMessage({
+            action: "onchat",
+            data: {
+                event: "GET_USER_LIST",
+                data: { page }
+            }
+        });
+    }
 
+    //name:string,type:boolean,actionTime:string
     getUserList() {
         this.sendMessage({
             action: "onchat",
             data: {
-                event: "GET_USER_LIST"
-
+                event: "GET_USER_LIST",
             }
         });
     }

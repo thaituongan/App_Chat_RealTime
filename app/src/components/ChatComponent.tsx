@@ -6,7 +6,7 @@ import '../styles/style.css';
 import WebSocketService from '../websocket/WebSocketService';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
-import { addMessage } from '../reducer/chatSlice';
+import { addMessage, setChatMessages } from '../reducer/chatSlice';
 import UserListComponent from "./UserListComponent";
 import { setUserList } from "../reducer/userListSlice";
 
@@ -21,14 +21,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const [input, setInput] = useState<string>('');
 
     useEffect(() => {
-        const storedReloginCode = localStorage.getItem('reloginCode');
-        const storedUsername = localStorage.getItem('username');
-
-        if (storedReloginCode && storedUsername) {
-            wsService.setReLoginCode(storedReloginCode);
-            wsService.setUser(storedUsername);
-        }
-
         const handleNewMessage = (data: any) => {
             const newMessage = JSON.stringify(data);
             dispatch(addMessage(newMessage));
@@ -37,12 +29,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 dispatch(setUserList(data.data));
             }
         };
-
         wsService.onMessage(handleNewMessage);
-        //wsService.getUserList();
-
         return () => {
             wsService.getUserList();
+            //wsService.close();
         };
     }, [wsService, dispatch]);
 
@@ -60,9 +50,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     };
 
     return (
-        <div>
+        <div className="chat-app">
+            <HeaderChat username={username} wsService={wsService} />
             <div className='container mt-3'>
-                <HeaderChat username={username} wsService={wsService} />
                 <div className='row'>
                     <div className='col-md-4'>
                         <UserListComponent wsService={wsService} />
