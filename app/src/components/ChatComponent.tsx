@@ -6,7 +6,7 @@ import '../styles/style.css';
 import WebSocketService from '../websocket/WebSocketService';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
-import { addMessage } from '../reducer/chatSlice';
+import { addMessage, setChatMessages } from '../reducer/chatSlice';
 import UserListComponent from "./UserListComponent";
 import { setUserList } from "../reducer/userListSlice";
 
@@ -19,32 +19,41 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const username = useSelector((state: RootState) => state.user.username);
     const messages = useSelector((state: RootState) => state.chat.messages);
     const [input, setInput] = useState<string>('');
+    const [selectedUser, setSelectedUser] = useState<string | null>(null);
 
     useEffect(() => {
         const handleNewMessage = (data: any) => {
-            const newMessage = JSON.stringify(data);
-            dispatch(addMessage(newMessage));
-
-            if(data.event === "GET_USER_LIST"){
+            if (data.event === "GET_PEOPLE_CHAT_MES" && data.status === "success") {
+                dispatch(setChatMessages(data.data));
+            } else if (data.event === "GET_USER_LIST" && data.status === "success") {
                 dispatch(setUserList(data.data));
             }
         };
 
         wsService.onMessage(handleNewMessage);
-        // wsService.getUserList();
+
 
         return () => {
             wsService.getUserList();
-            // wsService.close();
         };
     }, [wsService, dispatch]);
 
     const handleSendMessage = () => {
-        if (wsService.isConnected() && input.trim() !== '') {
-            wsService.sendChatMessage('people', 'moclan01', input);
+        if (wsService.isConnected() && input.trim() !== '' && selectedUser) {
+            const newMessage = {
+                id: Date.now(), // generate a unique id for the message
+                name: username,
+                type: 0,
+                to: selectedUser,
+                mes: input,
+                createAt: new Date().toISOString(),
+            };
+
+            wsService.sendChatMessage('people', selectedUser, input);
+            dispatch(addMessage(newMessage));
             setInput('');
         } else {
-            console.log('WebSocket connection is not open or input is empty');
+            console.log('WebSocket connection is not open, input is empty, or no user selected');
         }
     };
 
@@ -53,11 +62,14 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     };
 
     return (
-        <div>
+        <div className="chat-app">
             <HeaderChat username={username} wsService={wsService} />
             <div className='container mt-3'>
                 <div className='row'>
-                    <div className='col-md-12 chat-container'>
+                    <div className='col-md-4'>
+                        <UserListComponent wsService={wsService} onUserSelect={setSelectedUser} />
+                    </div>
+                    <div className='col-md-8 chat-container'>
                         <Chatbox messages={messages} />
                         <InputMessage
                             input={input}
@@ -65,11 +77,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                             onSendMessage={handleSendMessage}
                         />
                     </div>
-                   
                 </div>
-            </div>
-            <div className='col-md-4'>
-                        <UserListComponent wsService={wsService} />
             </div>
         </div>
     );

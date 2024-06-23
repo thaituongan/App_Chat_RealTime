@@ -1,8 +1,17 @@
 import React, { FC } from "react";
 import "../styles/style.css";
 
+interface Message {
+    id: number;
+    name: string;
+    type: number;
+    to: string;
+    mes: string;
+    createAt: string;
+}
+
 interface ChatboxProps {
-    messages: string[];
+    messages: Message[];
 }
 
 export const Chatbox: FC<ChatboxProps> = ({ messages }) => {
@@ -11,7 +20,11 @@ export const Chatbox: FC<ChatboxProps> = ({ messages }) => {
             <div className="chatbox">
                 {messages.map((message, index) => (
                     <div key={index} className="message">
-                        {message}
+                        <div className="message-header">
+                            <span className="message-author">{message.name}</span>
+                            <span className="message-timestamp">{new Date(message.createAt).toLocaleString()}</span>
+                        </div>
+                        <div className="message-content">{message.mes}</div>
                     </div>
                 ))}
             </div>

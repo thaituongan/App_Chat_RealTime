@@ -8,10 +8,7 @@
     flex-direction: column;
     height: 100%;
     justify-content: space-between;
-}
-
-.hello-user {
-    text-align: center;
+    max-height: 550px;
 }
 
 .input-message {
@@ -60,23 +57,6 @@
     gap: 12px;
 }
 
-/*.input-message .send-btn {*/
-/*    background-color: #ffffff;*/
-/*    border: none;*/
-/*    border-radius: 41px;*/
-/*    color: #fff;*/
-/*    display: flex;*/
-/*    padding: 10px;*/
-/*}*/
-/*.input-message .send-btn :hover {*/
-/*    background-color: #ffffff;*/
-/*    border: 1px black solid;*/
-/*    border-radius: 41px;*/
-/*    color: #fff;*/
-/*    display: flex;*/
-/*    padding: 10px;*/
-/*}*/
-
 .send-btn{
     border-radius: 50%;
     border: 3px white solid;
@@ -102,12 +82,55 @@
 .chatbox-container {
     flex-grow: 1;
     overflow-y: auto;
-    min-height: 400px;
+    height: 550px;
     border: black 1px solid;
     border-radius: 2px;
+
 }
 
 .option-frame .send-btn img {
     width: 20px;
     height: 20px;
 }
+/* style.css */
+.user-list {
+    height: 100%;
+    overflow-y: auto;
+    max-height: 550px;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.message-author {
+    font-weight: bold;
+    color: white;
+}
+
+.message-timestamp {
+    font-style: italic;
+    color: #eeeeee;
+}
+
+.message-content {
+    margin-top: 5px;
+}
+
+.input-message {
+    margin-top: 10px;
+}
+.list-group-item.active {
+    background-color: #007bff;
+    color: white;
+}
+

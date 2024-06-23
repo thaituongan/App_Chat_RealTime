@@ -1,5 +1,4 @@
 class WebSocketService {
-    
     private client: WebSocket | null = null;
     private url: string;
 
@@ -23,7 +22,6 @@ class WebSocketService {
         //     console.error('WebSocket error:', error);
         // };
     }
-
     sendMessage(message: object) {
         if (this.client && this.client.readyState === WebSocket.OPEN) {
             this.client.send(JSON.stringify(message));
@@ -54,8 +52,8 @@ class WebSocketService {
     }
 
     initializeNewConnection() {
-        this.close(); 
-        this.createConnection();  
+        this.close();
+        this.createConnection();
     }
 
     register(user: string, pass: string) {
@@ -73,16 +71,16 @@ class WebSocketService {
 
     login(user: string, pass: string) {
         this.createConnection();
-            this.sendMessage({
-                action: "onchat",
+        this.sendMessage({
+            action: "onchat",
+            data: {
+                event: "LOGIN",
                 data: {
-                    event: "LOGIN",
-                    data: {
-                        user,
-                        pass
-                    }
+                    user,
+                    pass
                 }
-            });
+            }
+        });
     }
 
     reLogin(user: string, code: string) {
@@ -136,6 +134,7 @@ class WebSocketService {
         });
     }
 
+
     checkUser(user: string) {
         this.sendMessage({
             action: "onchat",
@@ -144,6 +143,16 @@ class WebSocketService {
                 data: {
                     user
                 }
+            }
+        });
+    }
+    //lay danh sach user co phan trang
+    getUserListOnPage(page: number = 1) {
+        this.sendMessage({
+            action: "onchat",
+            data: {
+                event: "GET_USER_LIST",
+                data: { page }
             }
         });
     }

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC } from "react";
+import React, { ChangeEvent, FC, KeyboardEvent } from "react";
 import "../styles/style.css";
 
 interface InputMessageProps {
@@ -8,6 +8,12 @@ interface InputMessageProps {
 }
 
 export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSendMessage }) => {
+    const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            onSendMessage();
+        }
+    };
+
     return (
         <div className="input-message-container">
             <div className="input-message">
@@ -22,6 +28,7 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
                             className="form-control text-wrapper"
                             value={input}
                             onChange={onInputChange}
+                            onKeyPress={handleKeyPress}
                         />
                     </div>
                     <div className="option-frame">

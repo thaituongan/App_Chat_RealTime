@@ -20,17 +20,7 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
         }
 
         if (wsService) {
-            wsService.sendMessage({
-                action: 'onchat',
-                data: {
-                    event: 'REGISTER',
-                    data: {
-                        user: username,
-                        pass: password,
-                    },
-                },
-            });
-
+            wsService.register(username, password);
             wsService.onMessage((data: any) => {
                 if (data.status === 'success') {
                     console.log('Registration success');

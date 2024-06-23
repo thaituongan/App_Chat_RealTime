@@ -1,9 +1,10 @@
 import React, { useState, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { login } from '../reducer/userSlice';
+import { login as loginAction } from '../reducer/userSlice';
 import WebSocketService from '../websocket/WebSocketService';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 interface LoginComponentProps {
     wsService: WebSocketService | null;
 }
@@ -20,25 +21,17 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
 
     const handleLogin = () => {
         if (wsService) {
-            wsService.sendMessage({
-                action: 'onchat',
-                data: {
-                    event: 'LOGIN',
-                    data: {
-                        user: username,
-                        pass: password,
-                    },
-                },
-            });
-
+            wsService.login(username, password);
             wsService.onMessage((data: any) => {
-                if (data.status === 'success') {
-                    dispatch(login({ username }));
+                if (data.status === 'success' && data.event === 'LOGIN') {
+                    const reloginCode = data.data.RE_LOGIN_CODE;
+                    //wsService.setReLoginCode(reloginCode);
+                    //wsService(username ,reloginCode);
+                    dispatch(loginAction({ username, reloginCode }));
                     navigate('/chat', { state: { username } });
                 } else {
                     console.log('Login failed');
-                    console.log(data.status);
-                    alert('Login failed')
+                    alert('Login failed');
                 }
             });
         }
