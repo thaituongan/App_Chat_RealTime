@@ -19,6 +19,14 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const [input, setInput] = useState<string>('');
 
     useEffect(() => {
+        const storedReloginCode = localStorage.getItem('reloginCode');
+        const storedUsername = localStorage.getItem('username');
+
+        if (storedReloginCode && storedUsername) {
+            wsService.setReLoginCode(storedReloginCode);
+            wsService.setUser(storedUsername);
+        }
+
         const handleNewMessage = (data: any) => {
             const newMessage = JSON.stringify(data);
             dispatch(addMessage(newMessage));

@@ -27,6 +27,8 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
                     const reloginCode = data.data.RE_LOGIN_CODE;
                     wsService.setReLoginCode(reloginCode);
                     wsService.setUser(username);
+                    localStorage.setItem('reloginCode', reloginCode);
+                    localStorage.setItem('username', username);
                     dispatch(loginAction({ username, reloginCode }));
                     navigate('/chat', { state: { username } });
                 } else {
