@@ -20,8 +20,7 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
         }
 
         if (wsService) {
-            wsService.register(username, password)
-
+            wsService.register(username, password);
             wsService.onMessage((data: any) => {
                 if (data.status === 'success') {
                     console.log('Registration success');

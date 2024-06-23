@@ -21,6 +21,14 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const [input, setInput] = useState<string>('');
 
     useEffect(() => {
+        const storedReloginCode = localStorage.getItem('reloginCode');
+        const storedUsername = localStorage.getItem('username');
+
+        if (storedReloginCode && storedUsername) {
+            wsService.setReLoginCode(storedReloginCode);
+            wsService.setUser(storedUsername);
+        }
+
         const handleNewMessage = (data: any) => {
             const newMessage = JSON.stringify(data);
             dispatch(addMessage(newMessage));
@@ -53,8 +61,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
 
     return (
         <div>
-            <HeaderChat username={username} wsService={wsService} />
             <div className='container mt-3'>
+                <HeaderChat username={username} wsService={wsService} />
                 <div className='row'>
                     <div className='col-md-4'>
                         <UserListComponent wsService={wsService} />
