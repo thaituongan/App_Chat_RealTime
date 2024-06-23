@@ -20,17 +20,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
 
     const handleLogin = () => {
         if (wsService) {
-            wsService.sendMessage({
-                action: 'onchat',
-                data: {
-                    event: 'LOGIN',
-                    data: {
-                        user: username,
-                        pass: password,
-                    },
-                },
-            });
-
+            wsService.login(username, password)
             wsService.onMessage((data: any) => {
                 if (data.status === 'success') {
                     dispatch(login({ username }));

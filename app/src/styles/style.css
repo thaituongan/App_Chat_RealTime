@@ -111,3 +111,24 @@
     width: 20px;
     height: 20px;
 }
+/* style.css */
+.user-list {
+    height: 100%;
+    overflow-y: auto;
+}
+
+/*.chat-container {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    height: 100%;*/
+/*}*/
+
+/*.chatbox {*/
+/*    flex: 1;*/
+/*    overflow-y: auto;*/
+/*}*/
+
+.input-message {
+    margin-top: 10px;
+}
+

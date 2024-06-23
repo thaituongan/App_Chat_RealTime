@@ -31,17 +31,16 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         };
 
         wsService.onMessage(handleNewMessage);
-        // wsService.getUserList();
+        //wsService.getUserList();
 
         return () => {
             wsService.getUserList();
-            // wsService.close();
         };
     }, [wsService, dispatch]);
 
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '') {
-            wsService.sendChatMessage('people', 'moclan01', input);
+            wsService.sendChatMessage('people', username, input);
             setInput('');
         } else {
             console.log('WebSocket connection is not open or input is empty');
@@ -57,7 +56,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
             <HeaderChat username={username} wsService={wsService} />
             <div className='container mt-3'>
                 <div className='row'>
-                    <div className='col-md-12 chat-container'>
+                    <div className='col-md-4'>
+                        <UserListComponent wsService={wsService} />
+                    </div>
+                    <div className='col-md-8 chat-container'>
                         <Chatbox messages={messages} />
                         <InputMessage
                             input={input}
@@ -65,11 +67,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                             onSendMessage={handleSendMessage}
                         />
                     </div>
-                   
                 </div>
-            </div>
-            <div className='col-md-4'>
-                        <UserListComponent wsService={wsService} />
             </div>
         </div>
     );

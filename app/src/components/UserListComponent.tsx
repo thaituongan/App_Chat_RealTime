@@ -20,24 +20,29 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService }) => {
         };
 
         wsService.onMessage(handleUserList);
-        // wsService.getUserList();
+        wsService.getUserList();
 
         return () => {
             wsService.getUserList();
-            // wsService.close();
         };
     }, [wsService, dispatch]);
 
     return (
-        <div className="user-list">
-            <h3>User List</h3>
-            <ul>
-                {users.map(user => (
-                    <li key={user.name}>
-                        name: {user.name} - type: {user.type} - action time: {user.actionTime}
-                    </li>
-                ))}
-            </ul>
+        <div className="user-list card">
+            <div className="card-header">
+                <h3>Chat List</h3>
+            </div>
+            <div className="card-body">
+                <ul className="list-group">
+                    {users.map(user => (
+                        <li key={user.name} className="list-group-item">
+                            <strong>Name:</strong> {user.name}<br />
+                            <strong>Type:</strong> {user.type}<br />
+                            <strong>Action Time:</strong> {user.actionTime}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 };
