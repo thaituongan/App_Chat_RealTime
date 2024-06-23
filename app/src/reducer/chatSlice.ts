@@ -1,7 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+interface Message {
+    id: number;
+    name: string;
+    type: number;
+    to: string;
+    mes: string;
+    createAt: string;
+}
+
 interface ChatState {
-    messages: string[];
+    messages: Message[];
 }
 
 const initialState: ChatState = {
@@ -12,10 +21,10 @@ const chatSlice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
-        addMessage(state, action: PayloadAction<string>) {
+        addMessage(state, action: PayloadAction<Message>) {
             state.messages.push(action.payload);
         },
-        setChatMessages(state, action: PayloadAction<string[]>) {
+        setChatMessages(state, action: PayloadAction<Message[]>) {
             state.messages = action.payload;
         }
     }

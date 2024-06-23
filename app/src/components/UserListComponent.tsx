@@ -11,8 +11,7 @@ interface UserListComponentProps {
 const UserListComponent: React.FC<UserListComponentProps> = ({ wsService }) => {
     const dispatch = useDispatch();
     const users = useSelector((state: RootState) => state.userList.users);
-    const [page, setPage] = useState<number>(1);
-
+    const [selectedUser, setSelectedUser] = useState<string | null>(null);
 
     useEffect(() => {
         const handleUserList = (data: any) => {
@@ -29,18 +28,10 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService }) => {
     }, [wsService, dispatch]);
 
     const handleUserClick = (user: any) => {
+        setSelectedUser(user.name);
         wsService.getPeopleChatMessages(user.name, 1);
     };
 
-    const handleNextPage = () => {
-        setPage((prevPage) => prevPage + 1);
-    };
-
-    const handlePreviousPage = () => {
-        if (page > 1) {
-            setPage((prevPage) => prevPage - 1);
-        }
-    };
 
     return (
         <div className="user-list card">
@@ -52,7 +43,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService }) => {
                     {users.map(user => (
                         <li
                             key={user.name}
-                            className="list-group-item"
+                            className={`list-group-item ${user.name === selectedUser ? 'active' : ''}`}
                             onClick={() => handleUserClick(user)}
                         >
                             <strong>Name:</strong> {user.name}<br />
@@ -61,15 +52,6 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService }) => {
                         </li>
                     ))}
                 </ul>
-                <div className="pagination">
-                    <button className="btn btn-primary" onClick={handlePreviousPage} disabled={page === 1}>
-                        Previous
-                    </button>
-                    <span className="mx-3">Page {page}</span>
-                    <button className="btn btn-primary" onClick={handleNextPage}>
-                        Next
-                    </button>
-                </div>
             </div>
         </div>
     );

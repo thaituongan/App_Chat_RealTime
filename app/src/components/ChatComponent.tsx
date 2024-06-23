@@ -22,17 +22,18 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
 
     useEffect(() => {
         const handleNewMessage = (data: any) => {
-            const newMessage = JSON.stringify(data);
-            dispatch(addMessage(newMessage));
-
-            if(data.event === "GET_USER_LIST"){
+            if (data.event === "GET_PEOPLE_CHAT_MES" && data.status === "success") {
+                dispatch(setChatMessages(data.data));
+            } else if (data.event === "GET_USER_LIST" && data.status === "success") {
                 dispatch(setUserList(data.data));
             }
         };
+
         wsService.onMessage(handleNewMessage);
+
+
         return () => {
             wsService.getUserList();
-            //wsService.close();
         };
     }, [wsService, dispatch]);
 
