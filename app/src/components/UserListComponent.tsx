@@ -6,9 +6,10 @@ import WebSocketService from '../websocket/WebSocketService';
 
 interface UserListComponentProps {
     wsService: WebSocketService;
+    onUserSelect: (username: string) => void;
 }
 
-const UserListComponent: React.FC<UserListComponentProps> = ({ wsService }) => {
+const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUserSelect }) => {
     const dispatch = useDispatch();
     const users = useSelector((state: RootState) => state.userList.users);
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
@@ -21,6 +22,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService }) => {
         };
 
         wsService.onMessage(handleUserList);
+        wsService.getUserList();
 
         return () => {
             wsService.getUserList();
@@ -29,6 +31,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService }) => {
 
     const handleUserClick = (user: any) => {
         setSelectedUser(user.name);
+        onUserSelect(user.name);
         wsService.getPeopleChatMessages(user.name, 1);
     };
 
@@ -43,7 +46,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService }) => {
                     {users.map(user => (
                         <li
                             key={user.name}
-                            className={`list-group-item ${user.name === selectedUser ? 'active' : ''}`}
+                            className={`list-group-item ${selectedUser === user.name ? 'active' : ''}`}
                             onClick={() => handleUserClick(user)}
                         >
                             <strong>Name:</strong> {user.name}<br />

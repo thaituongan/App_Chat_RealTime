@@ -82,9 +82,10 @@
 .chatbox-container {
     flex-grow: 1;
     overflow-y: auto;
-    min-height: 400px;
+    height: 550px;
     border: black 1px solid;
     border-radius: 2px;
+
 }
 
 .option-frame .send-btn img {

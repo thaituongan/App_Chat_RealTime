@@ -19,6 +19,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const username = useSelector((state: RootState) => state.user.username);
     const messages = useSelector((state: RootState) => state.chat.messages);
     const [input, setInput] = useState<string>('');
+    const [selectedUser, setSelectedUser] = useState<string | null>(null);
 
     useEffect(() => {
         const handleNewMessage = (data: any) => {
@@ -38,11 +39,21 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     }, [wsService, dispatch]);
 
     const handleSendMessage = () => {
-        if (wsService.isConnected() && input.trim() !== '') {
-            wsService.sendChatMessage('people', username, input);
+        if (wsService.isConnected() && input.trim() !== '' && selectedUser) {
+            const newMessage = {
+                id: Date.now(), // generate a unique id for the message
+                name: username,
+                type: 0,
+                to: selectedUser,
+                mes: input,
+                createAt: new Date().toISOString(),
+            };
+
+            wsService.sendChatMessage('people', selectedUser, input);
+            dispatch(addMessage(newMessage));
             setInput('');
         } else {
-            console.log('WebSocket connection is not open or input is empty');
+            console.log('WebSocket connection is not open, input is empty, or no user selected');
         }
     };
 
@@ -56,7 +67,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
             <div className='container mt-3'>
                 <div className='row'>
                     <div className='col-md-4'>
-                        <UserListComponent wsService={wsService} />
+                        <UserListComponent wsService={wsService} onUserSelect={setSelectedUser} />
                     </div>
                     <div className='col-md-8 chat-container'>
                         <Chatbox messages={messages} />
