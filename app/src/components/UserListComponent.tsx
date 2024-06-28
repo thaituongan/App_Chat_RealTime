@@ -61,7 +61,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                     </button>
                 </div>
             </div>
-            <div className="card-body">
+            <div className="user-list card-body">
                 <ul className="list-group">
                     {filteredUsers.map(user => (
                         <li
