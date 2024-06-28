@@ -13,7 +13,8 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     const dispatch = useDispatch();
     const users = useSelector((state: RootState) => state.userList.users);
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
-    const [filter, setFilter] = useState<'people' | 'group'>('people');
+    const [newRoomName, setNewRoomName] = useState<string>('');
+    const [filterType, setFilterType] = useState<number | null>(0);
 
     useEffect(() => {
         const handleUserList = (data: any) => {
@@ -22,8 +23,10 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
             }
         };
 
+        wsService.onMessage(handleUserList);
+        wsService.getUserList();
+
         return () => {
-            wsService.onMessage(handleUserList);
             wsService.getUserList();
         };
     }, [wsService, dispatch]);
@@ -38,30 +41,43 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         }
     };
 
-    const filteredUsers = users.filter(user => filter === 'people' ? user.type === 0 : user.type === 1);
+    const handleCreateRoom = () => {
+        if (newRoomName.trim() !== '') {
+            wsService.createRoom(newRoomName);
+            setNewRoomName(''); // Clear the input field after creating the room
+        }
+    };
+
+    const handleFilterChange = (type: number | null) => {
+        setFilterType(type);
+    };
+
+    const filteredUsers = users.filter(user => filterType === null || user.type === filterType);
 
     return (
         <div className="user-list card">
             <div className="card-header">
-                {/*<h3>Chat List</h3>*/}
                 <div className="btn-group" role="group" aria-label="Basic example">
+                    <button  type="button"
+                             className={`btn ${filterType === 0 ? 'btn-primary' : 'btn-secondary'}`}
+                             onClick={() => handleFilterChange(0)}>People</button>
                     <button
                         type="button"
-                        className={`btn ${filter === 'people' ? 'btn-primary' : 'btn-secondary'}`}
-                        onClick={() => setFilter('people')}
-                    >
-                        People
-                    </button>
+                        className={`btn ${filterType === 1 ? 'btn-primary' : 'btn-secondary'}`}
+                        onClick={() => handleFilterChange(1)}>Groups</button>
+                </div>
+                <div>
+                    <input
+                        type="text"
+                        value={newRoomName}
+                        onChange={(e) => setNewRoomName(e.target.value)}
+                        placeholder="Enter room name"
+                    />
                     <button
-                        type="button"
-                        className={`btn ${filter === 'group' ? 'btn-primary' : 'btn-secondary'}`}
-                        onClick={() => setFilter('group')}
-                    >
-                        Group
-                    </button>
+                        onClick={handleCreateRoom}>Create Room</button>
                 </div>
             </div>
-            <div className="user-list card-body">
+            <div className="card-body">
                 <ul className="list-group">
                     {filteredUsers.map(user => (
                         <li
@@ -69,9 +85,8 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                             className={`list-group-item ${selectedUser === user.name ? 'active' : ''}`}
                             onClick={() => handleUserClick(user)}
                         >
-                            <strong>Name:</strong> {user.name}<br />
-                            <strong>Type:</strong> {user.type === 0 ? 'People' : 'Group'}<br />
-                            <strong>Action Time:</strong> {user.actionTime}
+                            <strong>{user.name}</strong> <br />
+                            {user.actionTime}
                         </li>
                     ))}
                 </ul>
