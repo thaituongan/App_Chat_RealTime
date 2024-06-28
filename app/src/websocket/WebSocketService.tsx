@@ -1,6 +1,7 @@
 class WebSocketService {
     private client: WebSocket | null = null;
     private url: string;
+    private reconnectHandlers: (() => void)[] = [];
 
     constructor(url: string) {
         this.url = url;
@@ -34,6 +35,8 @@ class WebSocketService {
             };
         }
     }
+
+
 
     onMessage(callback: (data: any) => void) {
         if (this.client) {
@@ -153,6 +156,20 @@ class WebSocketService {
             data: {
                 event: "GET_USER_LIST",
                 data: { page }
+            }
+        });
+    }
+
+    //lay ra tin nhan tu nhom
+    getRoomChatMessages(name: string, page: number) {
+        this.sendMessage({
+            action: "onchat",
+            data: {
+                event: "GET_ROOM_CHAT_MES",
+                data: {
+                    name,
+                    page
+                }
             }
         });
     }
