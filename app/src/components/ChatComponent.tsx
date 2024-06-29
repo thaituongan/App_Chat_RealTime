@@ -24,7 +24,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     useEffect(() => {
         const handleNewMessage = (data: any) => {
             if (data.event === "GET_PEOPLE_CHAT_MES" && data.status === "success") {
-                dispatch(setChatMessages(data.data));
+                dispatch(setChatMessages(data.data.reverse()));
             } else if (data.event === "GET_USER_LIST" && data.status === "success") {
                 dispatch(setUserList(data.data));
             }
