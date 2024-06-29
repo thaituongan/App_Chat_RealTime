@@ -23,15 +23,14 @@ export const Chatbox: FC<ChatboxProps> = ({ messages }) => {
             <div className="chatbox">
                 {messages.map((message, index) => (
                     // <div key={index} className="message">
-                    <div
-                    key={index}
-                    className={`message ${message.name === username ? "my-message" : "other-message"}`}
-                >
+                    <div key={index} className="message-box">
                         {/* <div className="message-header">
                             <span className="message-author">{message.name}</span>
                             <span className="message-timestamp">{new Date(message.createAt).toLocaleString()}</span>
                         </div> */}
-                        <div className="message-content">{message.mes}</div>
+                        <div className={`message ${message.name === username ? "my-message" : "other-message"}`}>
+                            {message.mes}
+                            </div>
                     </div>
                 ))}
             </div>
