@@ -38,10 +38,20 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         };
     }, [wsService, dispatch]);
 
+    useEffect(() => {
+        if (selectedUser) {
+            if (selectedUserType === 0) {
+                wsService.getPeopleChatMessages(selectedUser, 1);
+            } else if (selectedUserType === 1) {
+                wsService.getRoomChatMessages(selectedUser, 1);
+            }
+        }
+    }, [selectedUser, selectedUserType, wsService]);
+
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '' && selectedUser) {
             const newMessage = {
-                id: Date.now(), // generate a unique id for the message
+                id: Date.now(),
                 name: username,
                 type: 0,
                 to: selectedUser,
