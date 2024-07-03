@@ -15,6 +15,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
     const [newRoomName, setNewRoomName] = useState<string>('');
     const [filterType, setFilterType] = useState<number | null>(0);
+    const [searchQuery, setSearchQuery] = useState<string>('');
 
     useEffect(() => {
         const handleUserList = (data: any) => {
@@ -39,10 +40,11 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     const handleCreateRoom = () => {
         if (newRoomName.trim() !== '') {
             wsService.createRoom(newRoomName);
-            setNewRoomName(''); // Clear the input field after creating the room
+            setNewRoomName('');
         }
     };
 
+    //loc type tin nhan ca nhan hoac nhom
     const handleFilterChange = (type: number | null) => {
         setFilterType(type);
     };
@@ -51,7 +53,15 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         setNewRoomName(e.target.value);
     };
 
-    const filteredUsers = users.filter(user => filterType === null || user.type === filterType);
+    //Cập nhật truy vấn tìm kiếm khi người dùng nhập.
+    const handleSearchQueryChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const filteredUsers = users.filter(user =>
+        (filterType === null || user.type === filterType) &&
+        user.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
         <div className="user-list card">
@@ -61,9 +71,15 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                         type="text"
                         className="form-control"
                         placeholder="Name of Room or People"
+                        value={searchQuery}
+                        onChange={handleSearchQueryChange}
                     />
                     <div className="input-group-text">
-                        <input className="form-check-input mt-0" type="checkbox" onChange={() => handleFilterChange(filterType === 1 ? 0 : 1)} />
+                        <input
+                            className="form-check-input mt-0"
+                            type="checkbox"
+                            onChange={() => handleFilterChange(filterType === 1 ? 0 : 1)}
+                        />
                         Room
                     </div>
                     <button className="btn btn-primary">
