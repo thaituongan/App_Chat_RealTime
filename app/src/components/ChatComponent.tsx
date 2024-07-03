@@ -20,6 +20,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const messages = useSelector((state: RootState) => state.chat.messages);
     const [input, setInput] = useState<string>('');
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
+    const [selectedUserType, setSelectedUserType] = useState<number | null>(null);
 
     useEffect(() => {
         const handleNewMessage = (data: any) => {
@@ -32,16 +33,25 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
 
         wsService.onMessage(handleNewMessage);
 
-
         return () => {
             wsService.getUserList();
         };
     }, [wsService, dispatch]);
 
+    useEffect(() => {
+        if (selectedUser) {
+            if (selectedUserType === 0) {
+                wsService.getPeopleChatMessages(selectedUser, 1);
+            } else if (selectedUserType === 1) {
+                wsService.getRoomChatMessages(selectedUser, 1);
+            }
+        }
+    }, [selectedUser, selectedUserType, wsService]);
+
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '' && selectedUser) {
             const newMessage = {
-                id: Date.now(), // generate a unique id for the message
+                id: Date.now(),
                 name: username,
                 type: 0,
                 to: selectedUser,
@@ -61,13 +71,23 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         setInput(event.target.value);
     };
 
+    const handleUserSelect = (username: string, userType: number) => {
+        setSelectedUser(username);
+        setSelectedUserType(userType);
+        if (userType === 0) {
+            wsService.getPeopleChatMessages(username, 1);
+        } else if (userType === 1) {
+            wsService.getRoomChatMessages(username, 1);
+        }
+    };
+
     return (
         <div className="chat-app">
             <HeaderChat username={username} wsService={wsService} />
             <div className='container mt-3'>
                 <div className='row'>
                     <div className='col-md-4'>
-                        <UserListComponent wsService={wsService} onUserSelect={setSelectedUser} />
+                        <UserListComponent wsService={wsService} onUserSelect={handleUserSelect} />
                     </div>
                     <div className='col-md-8 chat-container'>
                         <Chatbox messages={messages} />

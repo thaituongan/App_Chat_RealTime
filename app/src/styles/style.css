@@ -88,7 +88,6 @@
     
 }
 
-
 .chatbox-container {
     flex-grow: 1;
     overflow-y: auto;
@@ -123,12 +122,12 @@
 
 .message-author {
     font-weight: bold;
-    color: white;
+    color: black;
 }
 
 .message-timestamp {
     font-style: italic;
-    color: #eeeeee;
+    color: rgba(238, 238, 238, 0.44);
 }
 
 .message-content {
@@ -156,4 +155,37 @@
     background-color: #4c4c4c;
     color: white;
     max-width: 70%;
+}
+.user-list .card-header {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.user-list .card-header .input-group {
+    max-width: 500px;
+}
+
+.user-list .list-group-item {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+.user-list .list-group-item:hover {
+    background-color: #e9ecef;
+}
+
+.user-list .list-group-item.active{
+    background-color: #e9ecef;
+    color: #282c34;
+}
+
+.user-list .fa-user-circle {
+    color: #6c757d;
+}
+
+.user-list .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
 }
