@@ -2,6 +2,7 @@ import React, { FC, useEffect, useRef } from "react";
 import "../styles/style.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import ReactEmoji from "react-emoji-render";
 
 interface Message {
     id: number;
@@ -31,13 +32,17 @@ export const Chatbox: FC<ChatboxProps> = ({ messages }) => {
         scrollToBottom();
     }, [messages]);
 
+    const renderMessageContent = (message: Message) => {
+        return <ReactEmoji text={message.mes} />; // Sử dụng ReactEmoji để render tin nhắn với emoji
+    };
+
     return (
         <div className="chatbox-container">
             <div className="chatbox">
                 {messages.map((message, index) => (
                     <div key={index} className={`message-box ${message.name === username ? "my-message" : "other-message"}`}>
                         <div className={`message ${message.name === username ? "my-message" : "other-message"}`}>
-                            {message.mes}
+                        {renderMessageContent(message)}
                         </div>
                     </div>
                 ))}
@@ -46,3 +51,5 @@ export const Chatbox: FC<ChatboxProps> = ({ messages }) => {
         </div>
     );
 };
+
+export default Chatbox;

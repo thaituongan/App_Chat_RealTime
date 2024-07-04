@@ -1,7 +1,6 @@
 import React, { ChangeEvent, FC, KeyboardEvent, useState } from "react";
 import "../styles/style.css";
 import Picker from 'emoji-picker-react';
-import { Emoji } from "emoji-mart";
 
 interface InputMessageProps {
     input: string;
