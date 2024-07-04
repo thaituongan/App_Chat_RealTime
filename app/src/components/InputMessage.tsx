@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FC, KeyboardEvent, useState } from "react";
 import "../styles/style.css";
-import EmojiPicker from 'emoji-picker-react';
+import Picker from 'emoji-picker-react';
 
 interface InputMessageProps {
     input: string;
@@ -17,52 +17,26 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
         }
     };
 
-    const onEmojiClick = (event: any, emojiObject: any) => {
-        const newInputValue = input + emojiObject.emoji;
-        const customEvent = {
-            target: { value: newInputValue }
-        } as ChangeEvent<HTMLInputElement>;
-        onInputChange(customEvent);
+
+    const onEmojiClick = (emojiObject: any, event: any) => {
+        console.log('Emoji Object:', emojiObject); 
+        const emojiUnified = emojiObject.unified;
+        if (emojiUnified) {
+            // Chuyển đổi chuỗi hex thành emoji thực tế
+            const emoji = String.fromCodePoint(...emojiUnified.split('-').map((code: string) => parseInt(code, 16)));
+            // Thêm đoạn mã emoji vào giá trị đầu vào
+            console.log(`:${emojiUnified}:`);
+            const newInputValue = input + emoji;
+            const customEvent = {
+                target: { value: newInputValue }
+            } as ChangeEvent<HTMLInputElement>;
+            onInputChange(customEvent);
+        } else {
+            console.error("Không tìm thấy thuộc tính unified trong emojiObject", emojiObject);
+        }
         setShowEmojiPicker(false);
     };
 
-    // return (
-    //     <div className="input-message-container">
-    //         <div className="input-message">
-    //             <div className="input-message-bar">
-    //                 <div className="type-message">
-    //                     <div className="md-attach-file-screen">
-    //                         <img className="attch-icon" alt="Attach icon" src="/MdAttachFile.png"/>
-    //                     </div>
-    //                     <input
-    //                         type="text"
-    //                         placeholder="Type a message..."
-    //                         className="form-control text-wrapper"
-    //                         value={input}
-    //                         onChange={onInputChange}
-    //                         onKeyPress={handleKeyPress}
-    //                     />
-    //                 </div>
-    //                 <div className="option-frame">
-    //                     <div className="fomat-mess">
-    //                         <div className="icon">
-    //                             <img className="happy" alt="Happy" src="/happy-1.png"
-    //                             onClick={() => setShowEmojiPicker(!showEmojiPicker)}/>
-    //                             {showEmojiPicker && <EmojiPicker onEmojiClick={onEmojiClick} />}
-    //                         </div>
-    //                         <div className="box">
-    //                             <img className="microphone" alt="Microphone" src="/Microphone%201.png"/>
-    //                         </div>
-    //                     </div>
-    //                     {/* Send button */}
-    //                     <button className="btn btn-primary send-btn bg-white border-opacity-10 " onClick={onSendMessage}>
-    //                         <img className="vector" alt="Send" src="/HiPaperAirplane.jpg"/>
-    //                     </button>
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     </div>
-    // );
     return (
         <div className="input-message-container">
             <div className="input-message">
@@ -77,35 +51,24 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
                             className="form-control text-wrapper"
                             value={input}
                             onChange={onInputChange}
-                            // onChange={(e) => onInputChange(e.target.value)}
                             onKeyPress={handleKeyPress}
                         />
                     </div>
                     <div className="option-frame">
                         <div className="fomat-mess">
-                            {/* <div className="icon">
+                            <div className="icon">
                                 <img
                                     className="happy"
                                     alt="Happy"
                                     src="/happy-1.png"
                                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                                 />
-                                {showEmojiPicker && <EmojiPicker onEmojiClick={onEmojiClick} />}
-                            </div> */}
-                             <div className="icon">
-                                <img
-                                    className="happy"
-                                    alt="Happy"
-                                    src="/happy-1.png"
-                                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                                />
-                                {showEmojiPicker && <EmojiPicker onEmojiClick={onEmojiClick} />}
+                                {showEmojiPicker && <Picker onEmojiClick={onEmojiClick} />}
                             </div>
                             <div className="box">
                                 <img className="microphone" alt="Microphone" src="/Microphone%201.png"/>
                             </div>
                         </div>
-                        {/* Send button */}
                         <button className="btn btn-primary send-btn bg-white border-opacity-10 " onClick={onSendMessage}>
                             <img className="vector" alt="Send" src="/HiPaperAirplane.jpg"/>
                         </button>
@@ -115,3 +78,5 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
         </div>
     );
 };
+
+export default InputMessage;
