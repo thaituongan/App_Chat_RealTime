@@ -2,7 +2,8 @@ import React, { FC, useEffect, useRef } from "react";
 import "../styles/style.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import ReactEmoji from "react-emoji-render";
+import Picker from 'emoji-picker-react';
+import emojiHexToEmoji from "../untils/emojiUtils";
 
 interface Message {
     id: number;
@@ -32,20 +33,28 @@ export const Chatbox: FC<ChatboxProps> = ({ messages }) => {
         scrollToBottom();
     }, [messages]);
 
-    const renderMessageContent = (message: Message) => {
-        return <ReactEmoji text={message.mes} />; // Sử dụng ReactEmoji để render tin nhắn với emoji
+    const renderMessage = (message: Message) => {
+        const convertedMessage = emojiHexToEmoji(message.mes); // Chuyển đổi emojiHex thành emoji
+        return (
+            <div key={message.id} className={`message-box ${message.name === username ? "my-message" : "other-message"}`}>
+                <div className={`message ${message.name === username ? "my-message" : "other-message"}`}>
+                    {convertedMessage}
+                </div>
+            </div>
+        );
     };
 
     return (
         <div className="chatbox-container">
             <div className="chatbox">
-                {messages.map((message, index) => (
+                {/* {messages.map((message, index) => (
                     <div key={index} className={`message-box ${message.name === username ? "my-message" : "other-message"}`}>
                         <div className={`message ${message.name === username ? "my-message" : "other-message"}`}>
-                        {renderMessageContent(message)}
+                        {message.mes}
                         </div>
                     </div>
-                ))}
+                ))} */}
+                {messages.map(message => renderMessage(message))}
                 <div ref={chatEndRef} />
             </div>
         </div>
