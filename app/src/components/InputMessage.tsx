@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FC, KeyboardEvent, useState } from "react";
 import "../styles/style.css";
 import Picker from 'emoji-picker-react';
+import { Emoji } from "emoji-mart";
 
 interface InputMessageProps {
     input: string;
@@ -10,23 +11,27 @@ interface InputMessageProps {
 
 export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSendMessage }) => {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [displayInputValue, setDisplayInputValue] = useState<string>(input);
 
     const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
-            onSendMessage();
+            handleSendClick();
         }
     };
 
 
     const onEmojiClick = (emojiObject: any, event: any) => {
-        console.log('Emoji Object:', emojiObject); 
         const emojiUnified = emojiObject.unified;
         if (emojiUnified) {
-            // Chuyển đổi chuỗi hex thành emoji thực tế
+            const emojiHex = `:${emojiUnified}:`;
             const emoji = String.fromCodePoint(...emojiUnified.split('-').map((code: string) => parseInt(code, 16)));
-            // Thêm đoạn mã emoji vào giá trị đầu vào
-            console.log(`:${emojiUnified}:`);
-            const newInputValue = input + emoji;
+            console.log(emojiHex);
+            console.log(emoji);
+
+            // Hiển thị emoji trong input
+            setDisplayInputValue(displayInputValue + emoji);
+
+            const newInputValue = input + emojiHex;
             const customEvent = {
                 target: { value: newInputValue }
             } as ChangeEvent<HTMLInputElement>;
@@ -35,6 +40,17 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
             console.error("Không tìm thấy thuộc tính unified trong emojiObject", emojiObject);
         }
         setShowEmojiPicker(false);
+    };
+
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setDisplayInputValue(event.target.value);
+        onInputChange(event);
+    };
+
+    const handleSendClick = () => {
+        // Xử lý khi người dùng gửi tin nhắn
+        onSendMessage();
+        setDisplayInputValue('');
     };
 
     return (
@@ -49,8 +65,10 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
                             type="text"
                             placeholder="Type a message..."
                             className="form-control text-wrapper"
-                            value={input}
-                            onChange={onInputChange}
+                            // value={input}
+                            // onChange={onInputChange}
+                            value={displayInputValue}
+                            onChange={handleChange}
                             onKeyPress={handleKeyPress}
                         />
                     </div>
@@ -69,7 +87,7 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
                                 <img className="microphone" alt="Microphone" src="/Microphone%201.png"/>
                             </div>
                         </div>
-                        <button className="btn btn-primary send-btn bg-white border-opacity-10 " onClick={onSendMessage}>
+                        <button className="btn btn-primary send-btn bg-white border-opacity-10 " onClick={handleSendClick}>
                             <img className="vector" alt="Send" src="/HiPaperAirplane.jpg"/>
                         </button>
                     </div>
