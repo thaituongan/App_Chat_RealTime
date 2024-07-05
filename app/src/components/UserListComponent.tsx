@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
 import { setUserList } from '../reducer/userListSlice';
 import WebSocketService from '../websocket/WebSocketService';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 interface UserListComponentProps {
     wsService: WebSocketService;
@@ -63,6 +65,30 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         user.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    const addTemporaryUser = () => {
+        // Check if searchQuery is not empty
+        if (searchQuery.trim() !== '') {
+            // Create a temporary user object
+            const temporaryUser = {
+                name: searchQuery,
+                type: 0, // Assuming type 0 for simplicity
+                actionTime: new Date().toISOString(),
+            };
+
+            // Dispatch action to add temporary user to the list
+            dispatch(setUserList([...users, temporaryUser]));
+
+            // Clear the search query after adding
+            setSearchQuery('');
+        }
+    };
+
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            addTemporaryUser();
+        }
+    };
+
     return (
         <div className="user-list card">
             <div className="card-header d-flex justify-content-between align-items-center">
@@ -82,8 +108,8 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                         />
                         Room
                     </div>
-                    <button className="btn btn-primary">
-                        <i className="fa fa-arrow-right"></i>
+                    <button className="btn btn-primary" onClick={addTemporaryUser}>
+                        <FontAwesomeIcon icon={faArrowRight} />
                     </button>
                 </div>
             </div>
