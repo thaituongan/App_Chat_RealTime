@@ -70,7 +70,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         setInput(event.target.value);
     };
-
+    // const handleChange = (value: string) => {
+    //     setInput(value);
+    // };
     const handleUserSelect = (username: string, userType: number) => {
         setSelectedUser(username);
         setSelectedUserType(userType);

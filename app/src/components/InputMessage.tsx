@@ -1,5 +1,6 @@
-import React, { ChangeEvent, FC, KeyboardEvent } from "react";
+import React, { ChangeEvent, FC, KeyboardEvent, useState } from "react";
 import "../styles/style.css";
+import Picker from 'emoji-picker-react';
 
 interface InputMessageProps {
     input: string;
@@ -8,10 +9,47 @@ interface InputMessageProps {
 }
 
 export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSendMessage }) => {
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [displayInputValue, setDisplayInputValue] = useState<string>(input);
+
     const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
-            onSendMessage();
+            handleSendClick();
         }
+    };
+
+
+    const onEmojiClick = (emojiObject: any, event: any) => {
+        const emojiUnified = emojiObject.unified;
+        if (emojiUnified) {
+            const emojiHex = `:${emojiUnified}:`;
+            const emoji = String.fromCodePoint(...emojiUnified.split('-').map((code: string) => parseInt(code, 16)));
+            console.log(emojiHex);
+            console.log(emoji);
+
+            // Hiển thị emoji trong input
+            setDisplayInputValue(displayInputValue + emoji);
+
+            const newInputValue = input + emojiHex;
+            const customEvent = {
+                target: { value: newInputValue }
+            } as ChangeEvent<HTMLInputElement>;
+            onInputChange(customEvent);
+        } else {
+            console.error("Không tìm thấy thuộc tính unified trong emojiObject", emojiObject);
+        }
+        setShowEmojiPicker(false);
+    };
+
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setDisplayInputValue(event.target.value);
+        onInputChange(event);
+    };
+
+    const handleSendClick = () => {
+        // Xử lý khi người dùng gửi tin nhắn
+        onSendMessage();
+        setDisplayInputValue('');
     };
 
     return (
@@ -26,22 +64,29 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
                             type="text"
                             placeholder="Type a message..."
                             className="form-control text-wrapper"
-                            value={input}
-                            onChange={onInputChange}
+                            // value={input}
+                            // onChange={onInputChange}
+                            value={displayInputValue}
+                            onChange={handleChange}
                             onKeyPress={handleKeyPress}
                         />
                     </div>
                     <div className="option-frame">
                         <div className="fomat-mess">
                             <div className="icon">
-                                <img className="happy" alt="Happy" src="/happy-1.png"/>
+                                <img
+                                    className="happy"
+                                    alt="Happy"
+                                    src="/happy-1.png"
+                                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                                />
+                                {showEmojiPicker && <Picker onEmojiClick={onEmojiClick} />}
                             </div>
                             <div className="box">
                                 <img className="microphone" alt="Microphone" src="/Microphone%201.png"/>
                             </div>
                         </div>
-                        {/* Send button */}
-                        <button className="btn btn-primary send-btn bg-white border-opacity-10 " onClick={onSendMessage}>
+                        <button className="btn btn-primary send-btn bg-white border-opacity-10 " onClick={handleSendClick}>
                             <img className="vector" alt="Send" src="/HiPaperAirplane.jpg"/>
                         </button>
                     </div>
@@ -50,3 +95,5 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
         </div>
     );
 };
+
+export default InputMessage;
