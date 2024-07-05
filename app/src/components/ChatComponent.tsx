@@ -77,7 +77,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         setInput(event.target.value);
     };
 
+
     // Hàm xử lý khi chọn người dùng từ danh sách
+
     const handleUserSelect = (username: string, userType: number) => {
         setSelectedUser(username);
         setSelectedUserType(userType);

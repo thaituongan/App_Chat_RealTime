@@ -189,3 +189,10 @@
     background-color: #007bff;
     border-color: #007bff;
 }
+
+.emoji-picker-react {
+    position: absolute;
+    bottom: 50px; /* Điều chỉnh vị trí của emoji picker */
+    right: 20px; /* Điều chỉnh vị trí của emoji picker */
+    z-index: 1000; /* Đảm bảo emoji picker xuất hiện trên các thành phần khác */
+}
