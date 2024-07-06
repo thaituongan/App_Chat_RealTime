@@ -39,21 +39,19 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         onUserSelect(user.name, user.type);
     };
 
-    //xu li tao phong chat moi
     const handleCreateRoom = () => {
         if (newRoomName.trim() !== '') {
             wsService.createRoom(newRoomName);
             setNewRoomName('');
-            setUserList(users);
+            wsService.getUserList();
         }
     };
 
-    //xu li tham gia phong chat
     const handleJoinRoom = () => {
         if (newRoomName.trim() !== '') {
             wsService.joinRoom(newRoomName);
             setNewRoomName('');
-            setUserList(users);
+            wsService.getUserList();
         }
     };
 

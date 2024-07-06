@@ -26,6 +26,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         const handleNewMessage = (data: any) => {
             if (data.event === "GET_PEOPLE_CHAT_MES" && data.status === "success") {
                 dispatch(setChatMessages(data.data.reverse()));
+            } else if (data.event === "GET_ROOM_CHAT_MES" && data.status === "success") {
+                dispatch(setChatMessages(data.data.chatData.reverse()));
             } else if (data.event === "GET_USER_LIST" && data.status === "success") {
                 dispatch(setUserList(data.data));
             } else if (data.event === "JOIN_ROOM") {
@@ -33,8 +35,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     console.log(`Joined room ${data.data.name}`);
                     setSelectedUser(data.data.name);
                     setSelectedUserType(1);
-                    } else {
-                    alert(`Failed to join room: ${data.mes}`)
+                } else {
+                    alert(`Failed to join room: ${data.mes}`);
                 }
             } else if (data.event === "CREATE_ROOM") {
                 if (data.status === "success") {
@@ -42,7 +44,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     setSelectedUser(data.data.name);
                     setSelectedUserType(1);
                 } else {
-                    alert(`Failed to create room: ${data.mes}`)
+                    alert(`Failed to create room: ${data.mes}`);
                 }
             }
         };
