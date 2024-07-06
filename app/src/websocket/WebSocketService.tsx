@@ -170,6 +170,18 @@ class WebSocketService {
             }
         });
     }
+    //tham gia vao phong chat
+    joinRoom(roomName: string) {
+        const message = {
+            action: "onchat",
+            data: {
+                event: "JOIN_ROOM",
+                data: { name: roomName }
+            }
+        };
+        this.sendMessage(message);
+    }
+
 
     getUserList() {
         this.sendMessage({
