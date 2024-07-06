@@ -124,10 +124,10 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                             value={newRoomName}
                             onChange={handleRoomNameChange}
                         />
-                        <button className="btn btn-success mt-2" onClick={handleCreateRoom}>
+                        <button className="btn btn-outline-primary mt-2 " onClick={handleCreateRoom}>
                             Create Room
                         </button>
-                        <button className="btn btn-success mt-2" onClick={handleJoinRoom}>
+                        <button className="btn btn-outline-primary mt-2" onClick={handleJoinRoom}>
                             Join Room
                         </button>
                     </div>
