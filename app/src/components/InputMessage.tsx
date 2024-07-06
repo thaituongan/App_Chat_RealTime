@@ -12,7 +12,7 @@ interface InputMessageProps {
 export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSendMessage }) => {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [displayInputValue, setDisplayInputValue] = useState<string>(input);
-    const [sendMessageValue, setSendMessageValue] = useState<string>(''); 
+    const [sendMessageValue, setSendMessageValue] = useState<string>(input); 
     const inputRef = useRef<HTMLInputElement>(null);
     
 
@@ -24,10 +24,10 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
 
     useEffect(() => {
         setDisplayInputValue(input);
-        // setSendMessageValue(input);
+        setSendMessageValue(input);
     }, [input]);
 
-    const onEmojiClick = (emojiObject: any, event: any) => {
+     const onEmojiClick = (emojiObject: any, event: any) => {
         const emojiUnified = emojiObject.unified;
         if (emojiUnified) {
             const emojiHex = `:${emojiUnified}:`;
@@ -44,7 +44,7 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
             setDisplayInputValue(newDisplayValue);
     
             const newInputValue = 
-                sendMessageValue.slice(0, cursorPosition) + emojiHex + sendMessageValue.slice(cursorPosition);
+                displayInputValue.slice(0, cursorPosition) + emojiHex + displayInputValue.slice(cursorPosition);
             
             setSendMessageValue(newInputValue);
 
@@ -59,7 +59,7 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
         }
         setShowEmojiPicker(false);
     };
-    
+
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         setDisplayInputValue(event.target.value);
@@ -89,6 +89,7 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
                             value={displayInputValue}
                             onChange={handleChange}
                             onKeyPress={handleKeyPress}
+                            ref={inputRef}
                         />
                     </div>
                     <div className="option-frame">
