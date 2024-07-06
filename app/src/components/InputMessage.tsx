@@ -6,7 +6,7 @@ import emojiHexToEmoji from "../untils/emojiUtils";
 interface InputMessageProps {
     input: string;
     onInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
-    onSendMessage: () => void;
+    onSendMessage: (message: string) => void;
 }
 
 export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSendMessage }) => {
@@ -24,36 +24,28 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
 
     useEffect(() => {
         setDisplayInputValue(input);
-        setSendMessageValue(input);
     }, [input]);
 
      const onEmojiClick = (emojiObject: any, event: any) => {
         const emojiUnified = emojiObject.unified;
         if (emojiUnified) {
-            const emojiHex = `:${emojiUnified}:`;
             const emoji = String.fromCodePoint(...emojiUnified.split('-').map((code: string) => parseInt(code, 16)));
-    
+
             const cursorPosition = inputRef.current?.selectionStart ?? displayInputValue.length;
-    
-            
-            const newDisplayValue = 
+
+            const newDisplayValue =
                 displayInputValue.slice(0, cursorPosition) + emoji + displayInputValue.slice(cursorPosition);
 
-            console.log("newDisplayValue:", newDisplayValue);
-            
             setDisplayInputValue(newDisplayValue);
-    
-            const newInputValue = 
-                displayInputValue.slice(0, cursorPosition) + emojiHex + displayInputValue.slice(cursorPosition);
-            
-            setSendMessageValue(newInputValue);
+
+            const emojiHex = `:${emojiUnified}:`;
+            const newInputValue =
+                input.slice(0, cursorPosition) + emojiHex + input.slice(cursorPosition);
 
             const message = {
-                target: {value : newInputValue}
-            }as ChangeEvent<HTMLInputElement>;
+                target: { value: newInputValue }
+            } as ChangeEvent<HTMLInputElement>;
             onInputChange(message);
-            
-            console.log("newInputValue:", newInputValue);
         } else {
             console.error("Không tìm thấy thuộc tính unified trong emojiObject", emojiObject);
         }
@@ -63,13 +55,13 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         setDisplayInputValue(event.target.value);
-        // setSendMessageValue(event.target.value);
+        setSendMessageValue(event.target.value);
         onInputChange(event);
     };
 
     const handleSendClick = () => {
         // Xử lý khi người dùng gửi tin nhắn
-        onSendMessage();
+        onSendMessage(sendMessageValue);
         setDisplayInputValue('');
         setSendMessageValue(''); 
     };
