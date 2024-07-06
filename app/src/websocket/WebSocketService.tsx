@@ -24,6 +24,9 @@ class WebSocketService {
         //     console.error('WebSocket error:', error);
         // };
     }
+
+
+
     //ham gui tin nhan
     sendMessage(message: object) {
         if (this.client && this.client.readyState === WebSocket.OPEN) {
