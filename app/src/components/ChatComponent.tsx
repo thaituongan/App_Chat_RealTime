@@ -10,12 +10,10 @@ import Chatbox from './Chatbox';
 import InputMessage from './InputMessage';
 import '../styles/style.css';
 
-// Define ChatComponentProps
 interface ChatComponentProps {
     wsService: WebSocketService;
 }
 
-// Define ChatComponent
 const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const dispatch = useDispatch();
     const username = useSelector((state: RootState) => state.user.username);
@@ -23,7 +21,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const [input, setInput] = useState<string>('');
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
     const [selectedUserType, setSelectedUserType] = useState<number | null>(null);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
         const handleNewMessage = (data: any) => {
@@ -36,18 +33,16 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     console.log(`Joined room ${data.data.name}`);
                     setSelectedUser(data.data.name);
                     setSelectedUserType(1);
-                    setErrorMessage(null);
-                } else {
-                    setErrorMessage(`Failed to join room: ${data.mes}`);
+                    } else {
+                    alert(`Failed to join room: ${data.mes}`)
                 }
             } else if (data.event === "CREATE_ROOM") {
                 if (data.status === "success") {
                     console.log(`Created room ${data.data.name}`);
                     setSelectedUser(data.data.name);
                     setSelectedUserType(1);
-                    setErrorMessage(null);
                 } else {
-                    setErrorMessage(`Failed to create room: ${data.mes}`);
+                    alert(`Failed to create room: ${data.mes}`)
                 }
             }
         };
@@ -122,7 +117,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                             onInputChange={handleChange}
                             onSendMessage={handleSendMessage}
                         />
-                        {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
                     </div>
                 </div>
             </div>
