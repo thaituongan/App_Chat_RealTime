@@ -8,6 +8,7 @@ class WebSocketService {
         this.createConnection();  // Khởi tạo kết nối ngay khi tạo đối tượng
     }
 
+    //tao ket noi qua websocket
     private createConnection() {
         this.client = new WebSocket(this.url);
 
@@ -23,6 +24,10 @@ class WebSocketService {
         //     console.error('WebSocket error:', error);
         // };
     }
+
+
+
+    //ham gui tin nhan
     sendMessage(message: object) {
         if (this.client && this.client.readyState === WebSocket.OPEN) {
             this.client.send(JSON.stringify(message));
@@ -37,7 +42,7 @@ class WebSocketService {
     }
 
 
-
+    //ham xu li tin nhan nhan duoc
     onMessage(callback: (data: any) => void) {
         if (this.client) {
             this.client.onmessage = (event) => {
@@ -52,11 +57,6 @@ class WebSocketService {
 
     close() {
         this.client?.close();
-    }
-
-    initializeNewConnection() {
-        this.close();
-        this.createConnection();
     }
 
     register(user: string, pass: string) {
@@ -136,6 +136,7 @@ class WebSocketService {
             }
         });
     }
+    //kiem tra nguoi dung co online hay khong
     checkUser(user: string) {
         this.sendMessage({
             action: "onchat",
@@ -172,9 +173,19 @@ class WebSocketService {
             }
         });
     }
+    //tham gia vao phong chat
+    joinRoom(roomName: string) {
+        const message = {
+            action: "onchat",
+            data: {
+                event: "JOIN_ROOM",
+                data: { name: roomName }
+            }
+        };
+        this.sendMessage(message);
+    }
 
 
-    //name:string,type:boolean,actionTime:string
     getUserList() {
         this.sendMessage({
             action: "onchat",
