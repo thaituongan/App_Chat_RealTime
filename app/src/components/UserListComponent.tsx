@@ -43,7 +43,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         if (newRoomName.trim() !== '') {
             wsService.createRoom(newRoomName);
             setNewRoomName('');
-            wsService.getUserList();
+            wsService.getUserList(); //cap nhat lai userlist
         }
     };
 
@@ -51,7 +51,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         if (newRoomName.trim() !== '') {
             wsService.joinRoom(newRoomName);
             setNewRoomName('');
-            wsService.getUserList();
+            wsService.getUserList(); // cap nhat lai userlist
         }
     };
 
