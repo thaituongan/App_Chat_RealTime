@@ -99,6 +99,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                         placeholder="Name of Room or People"
                         value={searchQuery}
                         onChange={handleSearchQueryChange}
+                        onKeyPress={handleKeyPress}
                     />
                     <div className="input-group-text">
                         <input
@@ -114,6 +115,20 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                 </div>
             </div>
             <div className="card-body">
+                {filterType === 1 && (
+                    <div className="mb-3">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="New Room Name"
+                            value={newRoomName}
+                            onChange={handleRoomNameChange}
+                        />
+                        <button className="btn btn-success mt-2" onClick={handleCreateRoom}>
+                            Create Room
+                        </button>
+                    </div>
+                )}
                 <ul className="list-group">
                     {filteredUsers.map(user => (
                         <li
@@ -122,7 +137,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                             onClick={() => handleUserClick(user)}
                         >
                             <div className="d-flex align-items-center">
-                                <i className="fa fa-user-circle fa-2x me-3"></i>
+                                <FontAwesomeIcon icon={faUserCircle} className="me-xxl-3 fa-home-user fa-2xl" />
                                 <div>
                                     <strong>{user.name}</strong><br />
                                     <small>{new Date(user.actionTime).toLocaleString()}</small>
