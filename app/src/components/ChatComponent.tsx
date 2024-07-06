@@ -114,11 +114,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     </div>
                     <div className='col-md-8 chat-container'>
                         <Chatbox messages={messages} />
-                        <InputMessage
-                            input={input}
-                            onInputChange={handleChange}
-                            onSendMessage={handleSendMessage}
-                        />
+                        <InputMessage input={input} onInputChange={handleChange} onSendMessage={handleSendMessage} />
                     </div>
                 </div>
             </div>

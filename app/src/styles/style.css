@@ -230,7 +230,17 @@
 
 .emoji-picker-react {
     position: absolute;
-    bottom: 50px; /* Điều chỉnh vị trí của emoji picker */
-    right: 20px; /* Điều chỉnh vị trí của emoji picker */
-    z-index: 1000; /* Đảm bảo emoji picker xuất hiện trên các thành phần khác */
+    bottom: 100px; /* Điều chỉnh khoảng cách từ dưới cùng của cửa sổ */
+    right: 20px; /* Điều chỉnh khoảng cách từ phải của cửa sổ */
+    z-index: 10000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: white;
+    padding: 10px;
+    width: 350px; /* Đặt kích thước cố định cho picker */
+    max-width: 100%; /* Đảm bảo picker không vượt quá chiều rộng cửa sổ */
 }
+
+
+

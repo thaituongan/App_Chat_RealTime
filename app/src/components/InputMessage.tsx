@@ -12,9 +12,7 @@ interface InputMessageProps {
 export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSendMessage }) => {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [displayInputValue, setDisplayInputValue] = useState<string>(input);
-    const [sendMessageValue, setSendMessageValue] = useState<string>(input); 
     const inputRef = useRef<HTMLInputElement>(null);
-    
 
     const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
@@ -24,54 +22,44 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
 
     useEffect(() => {
         setDisplayInputValue(input);
-        setSendMessageValue(input);
     }, [input]);
 
-     const onEmojiClick = (emojiObject: any, event: any) => {
+    const onEmojiClick = (emojiObject: any) => {
         const emojiUnified = emojiObject.unified;
         if (emojiUnified) {
             const emojiHex = `:${emojiUnified}:`;
-            const emoji = String.fromCodePoint(...emojiUnified.split('-').map((code: string) => parseInt(code, 16)));
-    
+            const emoji = emojiHexToEmoji(emojiHex);
+
             const cursorPosition = inputRef.current?.selectionStart ?? displayInputValue.length;
-    
-            
-            const newDisplayValue = 
+
+            const newDisplayValue =
                 displayInputValue.slice(0, cursorPosition) + emoji + displayInputValue.slice(cursorPosition);
 
-            console.log("newDisplayValue:", newDisplayValue);
-            
             setDisplayInputValue(newDisplayValue);
-    
-            const newInputValue = 
-                displayInputValue.slice(0, cursorPosition) + emojiHex + displayInputValue.slice(cursorPosition);
-            
-            setSendMessageValue(newInputValue);
+
+            const newInputValue =
+                displayInputValue.slice(0, cursorPosition) + emoji + displayInputValue.slice(cursorPosition);
 
             const message = {
-                target: {value : newInputValue}
-            }as ChangeEvent<HTMLInputElement>;
+                target: { value: newInputValue }
+            } as ChangeEvent<HTMLInputElement>;
             onInputChange(message);
-            
-            console.log("newInputValue:", newInputValue);
         } else {
             console.error("Không tìm thấy thuộc tính unified trong emojiObject", emojiObject);
         }
-        setShowEmojiPicker(false);
+        // Không ẩn emoji picker sau khi chọn emoji
     };
 
-
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setDisplayInputValue(event.target.value);
-        // setSendMessageValue(event.target.value);
+        const newDisplayValue = emojiHexToEmoji(event.target.value);
+        setDisplayInputValue(newDisplayValue);
         onInputChange(event);
     };
 
     const handleSendClick = () => {
-        // Xử lý khi người dùng gửi tin nhắn
         onSendMessage();
         setDisplayInputValue('');
-        setSendMessageValue(''); 
+        setShowEmojiPicker(false); // Ẩn emoji picker sau khi gửi tin nhắn
     };
 
     return (
@@ -80,7 +68,7 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
                 <div className="input-message-bar">
                     <div className="type-message">
                         <div className="md-attach-file-screen">
-                            <img className="attch-icon" alt="Attach icon" src="/MdAttachFile.png"/>
+                            <img className="attch-icon" alt="Attach icon" src="/MdAttachFile.png" />
                         </div>
                         <input
                             type="text"
@@ -101,14 +89,18 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
                                     src="/happy-1.png"
                                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                                 />
-                                {showEmojiPicker && <Picker onEmojiClick={onEmojiClick} />}
+                                {showEmojiPicker && (
+                                    <div className="emoji-picker-container">
+                                        <Picker onEmojiClick={onEmojiClick} />
+                                    </div>
+                                )}
                             </div>
                             <div className="box">
-                                <img className="microphone" alt="Microphone" src="/Microphone%201.png"/>
+                                <img className="microphone" alt="Microphone" src="/Microphone%201.png" />
                             </div>
                         </div>
-                        <button className="btn btn-primary send-btn bg-white border-opacity-10 " onClick={handleSendClick}>
-                            <img className="vector" alt="Send" src="/HiPaperAirplane.jpg"/>
+                        <button className="btn btn-primary send-btn bg-white border-opacity-10" onClick={handleSendClick}>
+                            <img className="vector" alt="Send" src="/HiPaperAirplane.jpg" />
                         </button>
                     </div>
                 </div>
