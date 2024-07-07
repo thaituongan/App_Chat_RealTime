@@ -9,6 +9,7 @@ import UserListComponent from './UserListComponent';
 import Chatbox from './Chatbox';
 import InputMessage from './InputMessage';
 import '../styles/style.css';
+import emojiHexToEmoji from "../untils/emojiUtils";
 
 interface ChatComponentProps {
     wsService: WebSocketService;
@@ -24,10 +25,20 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
 
     useEffect(() => {
         const handleNewMessage = (data: any) => {
+            console.log(data); // Log dữ liệu nhận được từ server để kiểm tra
+
             if (data.event === "GET_PEOPLE_CHAT_MES" && data.status === "success") {
-                dispatch(setChatMessages(data.data.reverse())); // Nếu nhận được tin nhắn cá nhân, cập nhật Redux store với các tin nhắn đó
+                const decodedMessages = data.data.map((msg: any) => ({
+                    ...msg,
+                    mes: decodeURIComponent(msg.mes)
+                }));
+                dispatch(setChatMessages(decodedMessages.reverse())); // Nếu nhận được tin nhắn cá nhân, cập nhật Redux store với các tin nhắn đó
             } else if (data.event === "GET_ROOM_CHAT_MES" && data.status === "success") {
-                dispatch(setChatMessages(data.data.chatData.reverse())); // Nếu nhận được tin nhắn nhóm, cập nhật Redux store với các tin nhắn đó
+                const decodedMessages = data.data.chatData.map((msg: any) => ({
+                    ...msg,
+                    mes: decodeURIComponent(msg.mes)
+                }));
+                dispatch(setChatMessages(decodedMessages.reverse())); // Nếu nhận được tin nhắn nhóm, cập nhật Redux store với các tin nhắn đó
             } else if (data.event === "GET_USER_LIST" && data.status === "success") {
                 dispatch(setUserList(data.data)); // Nếu nhận được danh sách người dùng, cập nhật Redux store với danh sách đó
             } else if (data.event === "JOIN_ROOM") {
@@ -56,6 +67,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         };
     }, [wsService, dispatch]);
 
+
     useEffect(() => {
         if (selectedUser) {
             if (selectedUserType === 0) {
@@ -77,10 +89,12 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 createAt: new Date().toISOString(),
             };
 
+            const encodedMessage = encodeURIComponent(input);
+
             if (selectedUserType === 0) {
-                wsService.sendChatMessage('people', selectedUser, input); // Gửi tin nhắn cá nhân
+                wsService.sendChatMessage('people', selectedUser, encodedMessage); // Gửi tin nhắn cá nhân
             } else if (selectedUserType === 1) {
-                wsService.sendChatMessage('room', selectedUser, input); // Gửi tin nhắn nhóm
+                wsService.sendChatMessage('room', selectedUser, encodedMessage); // Gửi tin nhắn nhóm
             }
 
             dispatch(addMessage(newMessage)); // Thêm tin nhắn mới vào Redux store
@@ -89,6 +103,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
             console.log('WebSocket connection is not open, input is empty, or no user selected');
         }
     };
+
+
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         setInput(event.target.value); // Cập nhật state khi nội dung tin nhắn thay đổi

@@ -34,7 +34,7 @@ export const Chatbox: FC<ChatboxProps> = ({ messages }) => {
     }, [messages]);
 
     const renderMessage = (message: Message) => {
-        const convertedMessage = emojiHexToEmoji(message.mes); // Convert emojiHex to emoji
+        const convertedMessage = decodeURIComponent(message.mes); // Decode URI component
         return (
             <div key={message.id}
                  className={`message-box ${message.name === username ? "my-message" : "other-message"}`}>
@@ -61,4 +61,3 @@ export const Chatbox: FC<ChatboxProps> = ({ messages }) => {
 };
 
 export default Chatbox;
-

@@ -2,6 +2,10 @@
     --b-0: rgba(255, 255, 255, 1);
     --paragraph: rgba(123, 129, 140, 1);
 }
+body {
+    font-family: 'Arial', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+}
+
 
 .chat-container {
     display: flex;
