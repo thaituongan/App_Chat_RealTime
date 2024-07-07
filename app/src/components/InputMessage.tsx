@@ -2,6 +2,7 @@ import React, { ChangeEvent, FC, KeyboardEvent, useState, useRef, useEffect } fr
 import "../styles/style.css";
 import Picker from 'emoji-picker-react';
 import emojiHexToEmoji from "../untils/emojiUtils";
+import { textToUnicode } from "../untils/unicodeUtils";
 
 interface InputMessageProps {
     input: string;
@@ -54,7 +55,14 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
 
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setDisplayInputValue(event.target.value);
+        // setDisplayInputValue(event.target.value);
+        const newValue = event.target.value;
+        setDisplayInputValue(newValue);
+        
+        // Chuyển đổi văn bản nhập thành mã Unicode
+        const unicodeValue = textToUnicode(newValue);
+        setSendMessageValue(unicodeValue);
+        console.log(unicodeValue);
         setSendMessageValue(event.target.value);
         onInputChange(event);
     };
