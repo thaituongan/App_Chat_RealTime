@@ -25,9 +25,23 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     useEffect(() => {
         const handleNewMessage = (data: any) => {
             if (data.event === "GET_PEOPLE_CHAT_MES" && data.status === "success") {
-                dispatch(setChatMessages(data.data.reverse())); // Nếu nhận được tin nhắn cá nhân, cập nhật Redux store với các tin nhắn đó
+                const decodedMessages = data.data.map((msg: any) => ({
+                    ...msg,
+                    mes: decodeURIComponent(msg.mes)
+                }));
+                dispatch(setChatMessages(decodedMessages.reverse())); // Nếu nhận được tin nhắn cá nhân, cập nhật Redux store với các tin nhắn đó
             } else if (data.event === "GET_ROOM_CHAT_MES" && data.status === "success") {
-                dispatch(setChatMessages(data.data.chatData.reverse())); // Nếu nhận được tin nhắn nhóm, cập nhật Redux store với các tin nhắn đó
+                const decodedMessages = data.data.chatData.map((msg: any) => ({
+                    ...msg,
+                    mes: decodeURIComponent(msg.mes)
+                }));
+                dispatch(setChatMessages(decodedMessages.reverse())); // Nếu nhận được tin nhắn nhóm, cập nhật Redux store với các tin nhắn đó
+            } else if (data.event === "NEW_MESSAGE" && data.status === "success") {
+                const newMessage = {
+                    ...data.data,
+                    mes: decodeURIComponent(data.data.mes)
+                };
+                dispatch(addMessage(newMessage)); // Thêm tin nhắn mới vào Redux store
             } else if (data.event === "GET_USER_LIST" && data.status === "success") {
                 dispatch(setUserList(data.data)); // Nếu nhận được danh sách người dùng, cập nhật Redux store với danh sách đó
             } else if (data.event === "JOIN_ROOM") {
@@ -56,6 +70,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         };
     }, [wsService, dispatch]);
 
+
+
     useEffect(() => {
         if (selectedUser) {
             if (selectedUserType === 0) {
@@ -65,6 +81,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
             }
         }
     }, [selectedUser, selectedUserType, wsService]);
+
 
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '' && selectedUser) {
@@ -77,10 +94,12 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 createAt: new Date().toISOString(),
             };
 
+            const encodedMessage = encodeURIComponent(input);
+
             if (selectedUserType === 0) {
-                wsService.sendChatMessage('people', selectedUser, input); // Gửi tin nhắn cá nhân
+                wsService.sendChatMessage('people', selectedUser, encodedMessage); // Gửi tin nhắn cá nhân
             } else if (selectedUserType === 1) {
-                wsService.sendChatMessage('room', selectedUser, input); // Gửi tin nhắn nhóm
+                wsService.sendChatMessage('room', selectedUser, encodedMessage); // Gửi tin nhắn nhóm
             }
 
             dispatch(addMessage(newMessage)); // Thêm tin nhắn mới vào Redux store
@@ -114,11 +133,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     </div>
                     <div className='col-md-8 chat-container'>
                         <Chatbox messages={messages} />
-                        <InputMessage
-                            input={input}
-                            onInputChange={handleChange}
-                            onSendMessage={handleSendMessage}
-                        />
+                        <InputMessage input={input} onInputChange={handleChange} onSendMessage={handleSendMessage} />
                     </div>
                 </div>
             </div>

@@ -17,5 +17,4 @@ export const emojiHexToEmoji = (emojiHex: string): string => {
     return convertedMessage;
 };
 
-
 export default emojiHexToEmoji;
