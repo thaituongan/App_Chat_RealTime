@@ -14,20 +14,20 @@ interface ChatState {
 }
 
 const initialState: ChatState = {
-    messages: []
+    messages: [],
 };
 
 const chatSlice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
-        addMessage(state, action: PayloadAction<Message>) {
+        addMessage: (state, action: PayloadAction<Message>) => {
             state.messages.push(action.payload);
         },
-        setChatMessages(state, action: PayloadAction<Message[]>) {
+        setChatMessages: (state, action: PayloadAction<Message[]>) => {
             state.messages = action.payload;
-        }
-    }
+        },
+    },
 });
 
 export const { addMessage, setChatMessages } = chatSlice.actions;

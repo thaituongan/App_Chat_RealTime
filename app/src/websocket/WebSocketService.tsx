@@ -1,12 +1,14 @@
 class WebSocketService {
     private client: WebSocket | null = null;
     private url: string;
+    private messageListeners: ((data: any) => void)[] = [];
     private reconnectHandlers: (() => void)[] = [];
 
     constructor(url: string) {
         this.url = url;
         this.createConnection();  // Khởi tạo kết nối ngay khi tạo đối tượng
     }
+
 
     //tao ket noi qua websocket
     private createConnection() {
@@ -19,11 +21,16 @@ class WebSocketService {
         this.client.onclose = () => {
             console.log('WebSocket connection closed');
         };
+        this.client.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            this.messageListeners.forEach((listener) => listener(data));
+        };
 
         // this.client.onerror = (error) => {
         //     console.error('WebSocket error:', error);
         // };
     }
+
 
 
 
@@ -45,6 +52,7 @@ class WebSocketService {
     //ham xu li tin nhan nhan duoc
     onMessage(callback: (data: any) => void) {
         if (this.client) {
+
             this.client.onmessage = (event) => {
                 callback(JSON.parse(event.data));
             };

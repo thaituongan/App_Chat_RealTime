@@ -9,7 +9,6 @@ import UserListComponent from './UserListComponent';
 import Chatbox from './Chatbox';
 import InputMessage from './InputMessage';
 import '../styles/style.css';
-import emojiHexToEmoji from "../untils/emojiUtils";
 
 interface ChatComponentProps {
     wsService: WebSocketService;
@@ -25,8 +24,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
 
     useEffect(() => {
         const handleNewMessage = (data: any) => {
-            console.log(data); // Log dữ liệu nhận được từ server để kiểm tra
-
             if (data.event === "GET_PEOPLE_CHAT_MES" && data.status === "success") {
                 const decodedMessages = data.data.map((msg: any) => ({
                     ...msg,
@@ -39,6 +36,12 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     mes: decodeURIComponent(msg.mes)
                 }));
                 dispatch(setChatMessages(decodedMessages.reverse())); // Nếu nhận được tin nhắn nhóm, cập nhật Redux store với các tin nhắn đó
+            } else if (data.event === "NEW_MESSAGE" && data.status === "success") {
+                const newMessage = {
+                    ...data.data,
+                    mes: decodeURIComponent(data.data.mes)
+                };
+                dispatch(addMessage(newMessage)); // Thêm tin nhắn mới vào Redux store
             } else if (data.event === "GET_USER_LIST" && data.status === "success") {
                 dispatch(setUserList(data.data)); // Nếu nhận được danh sách người dùng, cập nhật Redux store với danh sách đó
             } else if (data.event === "JOIN_ROOM") {
@@ -68,6 +71,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     }, [wsService, dispatch]);
 
 
+
     useEffect(() => {
         if (selectedUser) {
             if (selectedUserType === 0) {
@@ -77,6 +81,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
             }
         }
     }, [selectedUser, selectedUserType, wsService]);
+
 
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '' && selectedUser) {
@@ -103,8 +108,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
             console.log('WebSocket connection is not open, input is empty, or no user selected');
         }
     };
-
-
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         setInput(event.target.value); // Cập nhật state khi nội dung tin nhắn thay đổi

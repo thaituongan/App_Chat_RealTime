@@ -2,7 +2,6 @@ import React, { FC, useEffect, useRef } from "react";
 import "../styles/style.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import emojiHexToEmoji from "../untils/emojiUtils";
 
 interface Message {
     id: number;
@@ -17,12 +16,11 @@ interface ChatboxProps {
     messages: Message[];
 }
 
-export const Chatbox: FC<ChatboxProps> = ({ messages }) => {
+const Chatbox: FC<ChatboxProps> = ({ messages }) => {
     const username = useSelector((state: RootState) => state.user.username);
     const chatEndRef = useRef<HTMLDivElement>(null);
 
     // Tự động cuộn xuống để hiển thị tin nhắn mới
-
     const scrollToBottom = () => {
         if (chatEndRef.current) {
             chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -34,7 +32,7 @@ export const Chatbox: FC<ChatboxProps> = ({ messages }) => {
     }, [messages]);
 
     const renderMessage = (message: Message) => {
-        const convertedMessage = decodeURIComponent(message.mes); // Decode URI component
+        const convertedMessage = decodeURIComponent(message.mes);
         return (
             <div key={message.id}
                  className={`message-box ${message.name === username ? "my-message" : "other-message"}`}>
@@ -45,7 +43,6 @@ export const Chatbox: FC<ChatboxProps> = ({ messages }) => {
                 <div className={`message ${message.name === username ? "my-message" : "other-message"}`}>
                     {convertedMessage}
                 </div>
-
             </div>
         );
     };
@@ -54,7 +51,7 @@ export const Chatbox: FC<ChatboxProps> = ({ messages }) => {
         <div className="chatbox-container">
             <div className="chatbox">
                 {messages.map(message => renderMessage(message))}
-                <div ref={chatEndRef}/>
+                <div ref={chatEndRef} />
             </div>
         </div>
     );
