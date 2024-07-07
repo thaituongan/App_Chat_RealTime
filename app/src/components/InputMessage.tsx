@@ -1,7 +1,6 @@
 import React, { ChangeEvent, FC, KeyboardEvent, useState, useRef, useEffect } from "react";
 import "../styles/style.css";
-import Picker from 'emoji-picker-react';
-import emojiHexToEmoji from "../untils/emojiUtils";
+import EmojiPickerPortal from './EmojiPickerPortalProps';
 
 interface InputMessageProps {
     input: string;
@@ -25,41 +24,24 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
     }, [input]);
 
     const onEmojiClick = (emojiObject: any) => {
-        const emojiUnified = emojiObject.unified;
-        if (emojiUnified) {
-            const emojiHex = `:${emojiUnified}:`;
-            const emoji = emojiHexToEmoji(emojiHex);
+        const emoji = String.fromCodePoint(...emojiObject.unified.split('-').map((hex: string) => parseInt(hex, 16)));
+        const cursorPosition = inputRef.current?.selectionStart ?? displayInputValue.length;
+        const newDisplayValue = displayInputValue.slice(0, cursorPosition) + emoji + displayInputValue.slice(cursorPosition);
 
-            const cursorPosition = inputRef.current?.selectionStart ?? displayInputValue.length;
-
-            const newDisplayValue =
-                displayInputValue.slice(0, cursorPosition) + emoji + displayInputValue.slice(cursorPosition);
-
-            setDisplayInputValue(newDisplayValue);
-
-            const newInputValue =
-                displayInputValue.slice(0, cursorPosition) + emoji + displayInputValue.slice(cursorPosition);
-
-            const message = {
-                target: { value: newInputValue }
-            } as ChangeEvent<HTMLInputElement>;
-            onInputChange(message);
-        } else {
-            console.error("Không tìm thấy thuộc tính unified trong emojiObject", emojiObject);
-        }
-        // Không ẩn emoji picker sau khi chọn emoji
+        setDisplayInputValue(newDisplayValue);
+        const message = { target: { value: newDisplayValue } } as ChangeEvent<HTMLInputElement>;
+        onInputChange(message);
     };
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const newDisplayValue = emojiHexToEmoji(event.target.value);
-        setDisplayInputValue(newDisplayValue);
+        setDisplayInputValue(event.target.value);
         onInputChange(event);
     };
 
     const handleSendClick = () => {
         onSendMessage();
         setDisplayInputValue('');
-        setShowEmojiPicker(false); // Ẩn emoji picker sau khi gửi tin nhắn
+        setShowEmojiPicker(false);
     };
 
     return (
@@ -89,11 +71,11 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
                                     src="/happy-1.png"
                                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                                 />
-                                {showEmojiPicker && (
-                                    <div className="emoji-picker-container">
-                                        <Picker onEmojiClick={onEmojiClick} />
-                                    </div>
-                                )}
+                                <EmojiPickerPortal
+                                    show={showEmojiPicker}
+                                    onEmojiClick={onEmojiClick}
+                                    onClose={() => setShowEmojiPicker(false)}
+                                />
                             </div>
                             <div className="box">
                                 <img className="microphone" alt="Microphone" src="/Microphone%201.png" />
