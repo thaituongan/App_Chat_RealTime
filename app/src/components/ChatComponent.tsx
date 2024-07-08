@@ -8,6 +8,7 @@ import HeaderChat from './HeaderChat';
 import UserListComponent from './UserListComponent';
 import Chatbox from './Chatbox';
 import InputMessage from './InputMessage';
+import { getReLoginCode } from '../untils/localStorageUtils';
 import '../styles/style.css';
 
 interface ChatComponentProps {
@@ -65,12 +66,15 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
 
         wsService.onMessage(handleNewMessage); // Thiết lập hàm xử lý khi nhận được tin nhắn từ WebSocket
 
+        const reloginCode = getReLoginCode();
+        if (reloginCode) {
+            wsService.reLogin(username, reloginCode);
+        }
+
         return () => {
             wsService.getUserList(); // Lấy danh sách người dùng khi component unmount
         };
     }, [wsService, dispatch]);
-
-
 
     useEffect(() => {
         if (selectedUser) {
@@ -81,7 +85,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
             }
         }
     }, [selectedUser, selectedUserType, wsService]);
-
 
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '' && selectedUser) {
