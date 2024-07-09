@@ -26,31 +26,32 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const [currentUser, setCurrentUser] = useState<string>(username);
 
     useEffect(() => {
+
         const handleNewMessage = (data: any) => {
             if (data.event === "GET_PEOPLE_CHAT_MES" && data.status === "success") {
                 const decodedMessages = data.data.map((msg: any) => ({
                     ...msg,
                     mes: decodeURIComponent(msg.mes)
                 }));
-                dispatch(setChatMessages(decodedMessages.reverse()));
+                dispatch(setChatMessages(decodedMessages.reverse())); // Nếu nhận được tin nhắn cá nhân, cập nhật Redux store với các tin nhắn đó
             } else if (data.event === "GET_ROOM_CHAT_MES" && data.status === "success") {
                 const decodedMessages = data.data.chatData.map((msg: any) => ({
                     ...msg,
                     mes: decodeURIComponent(msg.mes)
                 }));
-                dispatch(setChatMessages(decodedMessages.reverse()));
+                dispatch(setChatMessages(decodedMessages.reverse())); // Nếu nhận được tin nhắn nhóm, cập nhật Redux store với các tin nhắn đó
             } else if (data.event === "SEND_CHAT" && data.status === "success") {
                 const newMessage = {
                     ...data.data,
                     mes: decodeURIComponent(data.data.mes)
                 };
-                dispatch(addMessage(newMessage));
+                dispatch(addMessage(newMessage)); // Thêm tin nhắn mới vào Redux store
             } else if (data.event === "GET_USER_LIST" && data.status === "success") {
-                dispatch(setUserList(data.data));
+                dispatch(setUserList(data.data)); // Nếu nhận được danh sách người dùng, cập nhật Redux store với danh sách đó
             } else if (data.event === "JOIN_ROOM") {
                 if (data.status === "success") {
                     console.log(`Joined room ${data.data.name}`);
-                    setSelectedUser(data.data.name);
+                    setSelectedUser(data.data.name); // Cập nhật phòng đã tham gia
                     setSelectedUserType(1);
                 } else {
                     alert(`Failed to join room: ${data.mes}`);
@@ -58,16 +59,17 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
             } else if (data.event === "CREATE_ROOM") {
                 if (data.status === "success") {
                     console.log(`Created room ${data.data.name}`);
-                    setSelectedUser(data.data.name);
-                    setSelectedUserType(1);
+                    setSelectedUser(data.data.name); // Cập nhật phòng đã tạo
+                    setSelectedUserType(1); //
                 } else {
                     alert(`Failed to create room: ${data.mes}`);
                 }
             }
         };
 
-        wsService.onMessage(handleNewMessage);
+        wsService.onMessage(handleNewMessage); // Thiết lập hàm xử lý khi nhận được tin nhắn từ WebSocket
 
+        //wsService.onMessage(handleNewMessage);
         const userReload = getUsername();
         const reloginCode = getReLoginCode();
         if (reloginCode && userReload) {
@@ -130,6 +132,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 wsService.sendChatMessage('room', selectedUser, encodedMessage);
             }
 
+            dispatch(addMessage(newMessage)); // Thêm tin nhắn mới vào Redux store
             setInput('');
             dispatch(setChatMessages([...messages, newMessage])); // Cập nhật lại messages
         } else {
