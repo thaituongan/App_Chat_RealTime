@@ -20,6 +20,7 @@ root.render(
     <ErrorBoundary>
         <BrowserRouter>
                 <Provider store={store}>
+                    <div id="emoji-picker-portal"></div>
                     <App />
                 </Provider>
         </BrowserRouter>

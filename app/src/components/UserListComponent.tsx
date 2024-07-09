@@ -43,10 +43,18 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         if (newRoomName.trim() !== '') {
             wsService.createRoom(newRoomName);
             setNewRoomName('');
+            wsService.getUserList(); //cap nhat lai userlist
         }
     };
 
-    //loc type tin nhan ca nhan hoac nhom
+    const handleJoinRoom = () => {
+        if (newRoomName.trim() !== '') {
+            wsService.joinRoom(newRoomName);
+            setNewRoomName('');
+            wsService.getUserList(); // cap nhat lai userlist
+        }
+    };
+
     const handleFilterChange = (type: number | null) => {
         setFilterType(type);
     };
@@ -55,7 +63,6 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         setNewRoomName(e.target.value);
     };
 
-    //Cập nhật truy vấn tìm kiếm khi người dùng nhập.
     const handleSearchQueryChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
     };
@@ -66,19 +73,14 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     );
 
     const addTemporaryUser = () => {
-        // Check if searchQuery is not empty
         if (searchQuery.trim() !== '') {
-            // Create a temporary user object
             const temporaryUser = {
                 name: searchQuery,
-                type: 0, // Assuming type 0 for simplicity
+                type: 0,
                 actionTime: new Date().toISOString(),
             };
 
-            // Dispatch action to add temporary user to the list
             dispatch(setUserList([...users, temporaryUser]));
-
-            // Clear the search query after adding
             setSearchQuery('');
         }
     };
@@ -99,6 +101,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                         placeholder="Name of Room or People"
                         value={searchQuery}
                         onChange={handleSearchQueryChange}
+                        onKeyPress={handleKeyPress}
                     />
                     <div className="input-group-text">
                         <input
@@ -114,6 +117,23 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                 </div>
             </div>
             <div className="card-body">
+                {filterType === 1 && (
+                    <div className="mb-3">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="New Room Name"
+                            value={newRoomName}
+                            onChange={handleRoomNameChange}
+                        />
+                        <button className="btn btn-outline-primary mt-2 " onClick={handleCreateRoom}>
+                            Create Room
+                        </button>
+                        <button className="btn btn-outline-primary mt-2" onClick={handleJoinRoom}>
+                            Join Room
+                        </button>
+                    </div>
+                )}
                 <ul className="list-group">
                     {filteredUsers.map(user => (
                         <li
@@ -122,7 +142,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                             onClick={() => handleUserClick(user)}
                         >
                             <div className="d-flex align-items-center">
-                                <i className="fa fa-user-circle fa-2x me-3"></i>
+                                <FontAwesomeIcon icon={faUserCircle} className="me-xxl-3 fa-home-user fa-2xl" />
                                 <div>
                                     <strong>{user.name}</strong><br />
                                     <small>{new Date(user.actionTime).toLocaleString()}</small>

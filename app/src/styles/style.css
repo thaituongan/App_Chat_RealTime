@@ -2,6 +2,10 @@
     --b-0: rgba(255, 255, 255, 1);
     --paragraph: rgba(123, 129, 140, 1);
 }
+body {
+    font-family: 'Arial', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+}
+
 
 .chat-container {
     display: flex;
@@ -77,7 +81,7 @@
     color: white;
     max-width: 100%;
     word-wrap: break-word;
-    overflow-wrap: break-word; 
+    overflow-wrap: break-word;
 }
 
 .message-box {
@@ -85,7 +89,7 @@
     flex-direction: column;
     margin-bottom: 10px;
     justify-content: space-between;
-    
+
 }
 
 .chatbox-container {
@@ -94,7 +98,7 @@
     height: 550px;
     border: black 1px solid;
     border-radius: 2px;
-    
+
 }
 
 .chatbox{
@@ -152,8 +156,8 @@
 
 .message.other-message {
     align-self: flex-start;
-    background-color: #4c4c4c;
-    color: white;
+    background-color: #e9e9e9;
+    color: #000;
     max-width: 70%;
 }
 .user-list .card-header {
@@ -189,10 +193,78 @@
     background-color: #007bff;
     border-color: #007bff;
 }
+.message-info {
+    font-size: 0.8em;
+    color: #888;
+}
+
+.message-content-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.message-sender {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.message-time {
+    font-style: italic;
+    color: #888;
+}
+
+.message-info.my-message {
+    text-align: right;
+}
+
+.message-info.other-message {
+    text-align: left;
+    /*display: flex;*/
+    /*flex-direction: column;*/
+}
+
+.message-box .other-message {
+    flex-direction: row;
+}
+
+.message-box .my-message {
+    flex-direction: column;
+    align-items: flex-end;
+}
 
 .emoji-picker-react {
     position: absolute;
-    bottom: 50px; /* Điều chỉnh vị trí của emoji picker */
-    right: 20px; /* Điều chỉnh vị trí của emoji picker */
-    z-index: 1000; /* Đảm bảo emoji picker xuất hiện trên các thành phần khác */
+    bottom: 100px; /* Điều chỉnh khoảng cách từ dưới cùng của cửa sổ */
+    right: 20px; /* Điều chỉnh khoảng cách từ phải của cửa sổ */
+    z-index: 10000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: white;
+    padding: 10px;
+    width: 350px; /* Đặt kích thước cố định cho picker */
+    max-width: 100%; /* Đảm bảo picker không vượt quá chiều rộng cửa sổ */
 }
+
+.emoji-picker-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.emoji-picker-dialog {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+

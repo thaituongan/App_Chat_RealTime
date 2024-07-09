@@ -1,6 +1,7 @@
 class WebSocketService {
     private client: WebSocket | null = null;
     private url: string;
+    private messageListeners: ((data: any) => void)[] = [];
     private reconnectHandlers: (() => void)[] = [];
 
     constructor(url: string) {
@@ -8,6 +9,8 @@ class WebSocketService {
         this.createConnection();  // Khởi tạo kết nối ngay khi tạo đối tượng
     }
 
+
+    //tao ket noi qua websocket
     private createConnection() {
         this.client = new WebSocket(this.url);
 
@@ -18,11 +21,20 @@ class WebSocketService {
         this.client.onclose = () => {
             console.log('WebSocket connection closed');
         };
+        this.client.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            this.messageListeners.forEach((listener) => listener(data));
+        };
 
         // this.client.onerror = (error) => {
         //     console.error('WebSocket error:', error);
         // };
     }
+
+
+
+
+    //ham gui tin nhan
     sendMessage(message: object) {
         if (this.client && this.client.readyState === WebSocket.OPEN) {
             this.client.send(JSON.stringify(message));
@@ -37,9 +49,10 @@ class WebSocketService {
     }
 
 
-
+    //ham xu li tin nhan nhan duoc
     onMessage(callback: (data: any) => void) {
         if (this.client) {
+
             this.client.onmessage = (event) => {
                 callback(JSON.parse(event.data));
             };
@@ -52,11 +65,6 @@ class WebSocketService {
 
     close() {
         this.client?.close();
-    }
-
-    initializeNewConnection() {
-        this.close();
-        this.createConnection();
     }
 
     register(user: string, pass: string) {
@@ -136,6 +144,7 @@ class WebSocketService {
             }
         });
     }
+    //kiem tra nguoi dung co online hay khong
     checkUser(user: string) {
         this.sendMessage({
             action: "onchat",
@@ -172,9 +181,19 @@ class WebSocketService {
             }
         });
     }
+    //tham gia vao phong chat
+    joinRoom(roomName: string) {
+        const message = {
+            action: "onchat",
+            data: {
+                event: "JOIN_ROOM",
+                data: { name: roomName }
+            }
+        };
+        this.sendMessage(message);
+    }
 
 
-    //name:string,type:boolean,actionTime:string
     getUserList() {
         this.sendMessage({
             action: "onchat",
