@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login as loginAction } from '../reducer/userSlice';
 import WebSocketService from '../websocket/WebSocketService';
-import {saveReLoginCode} from '../untils/localStorageUtils';
+import { saveReLoginCode } from '../untils/localStorageUtils';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface LoginComponentProps {
@@ -26,7 +26,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
             wsService.onMessage((data: any) => {
                 if (data.status === 'success' && data.event === 'LOGIN') {
                     const reloginCode = data.data.RE_LOGIN_CODE;
-                    saveReLoginCode(reloginCode); // Lưu reloginCode vào localStorage
+                    saveReLoginCode(username, reloginCode); // Lưu reloginCode vào localStorage
                     dispatch(loginAction({ username, reloginCode }));
                     navigate('/chat', { state: { username } });
                 } else {
@@ -35,7 +35,6 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
             });
         }
     };
-
 
     return (
         <div className="container mt-5">

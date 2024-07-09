@@ -1,12 +1,17 @@
-export const saveReLoginCode = (code: string) => {
-    localStorage.setItem('reloginCode', code);
+export const saveReLoginCode = (username: string, code: string) => {
+    localStorage.setItem('reLoginCode', code);
+    localStorage.setItem('username', username);
 };
 
 export const getReLoginCode = () => {
-    return localStorage.getItem('reloginCode');
+    return localStorage.getItem('reLoginCode');
+};
+
+export const getUsername = () => {
+    return localStorage.getItem('username');
 };
 
 export const clearReLoginCode = () => {
-    localStorage.removeItem('reloginCode');
+    localStorage.removeItem('reLoginCode');
+   // localStorage.removeItem('username');
 };
-

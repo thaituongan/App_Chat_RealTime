@@ -1,5 +1,4 @@
-import {clearReLoginCode} from '../untils/localStorageUtils';
-
+import {clearReLoginCode, getReLoginCode, getUsername} from '../untils/localStorageUtils';
 
 class WebSocketService {
     private client: WebSocket | null = null;
@@ -17,11 +16,17 @@ class WebSocketService {
 
         this.client.onopen = () => {
             console.log('WebSocket connection opened');
+            const reloginCode = getReLoginCode();
+            const userReload = getUsername();
+            if (reloginCode && userReload) {
+                this.reLogin(userReload, reloginCode);
+            }
         };
 
         this.client.onclose = () => {
             console.log('WebSocket connection closed');
             clearReLoginCode();
+
         };
 
         this.client.onmessage = (event) => {
@@ -75,7 +80,6 @@ class WebSocketService {
     }
 
     login(user: string, pass: string) {
-        this.createConnection();
         this.sendMessage({
             action: "onchat",
             data: {

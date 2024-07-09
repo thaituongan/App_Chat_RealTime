@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
@@ -8,8 +9,8 @@ import HeaderChat from './HeaderChat';
 import UserListComponent from './UserListComponent';
 import Chatbox from './Chatbox';
 import InputMessage from './InputMessage';
-import { getReLoginCode } from '../untils/localStorageUtils';
 import '../styles/style.css';
+import {getReLoginCode, getUsername} from "../untils/localStorageUtils";
 
 interface ChatComponentProps {
     wsService: WebSocketService;
@@ -65,14 +66,24 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         };
 
         wsService.onMessage(handleNewMessage); // Thiết lập hàm xử lý khi nhận được tin nhắn từ WebSocket
-
+        // Re-login if re-login code is present
+        const userReload = getUsername();
         const reloginCode = getReLoginCode();
-        if (reloginCode) {
-            wsService.reLogin(username, reloginCode);
+        if (reloginCode && userReload) {
+            wsService.reLogin(userReload, reloginCode);
+            wsService.onMessage((data: any) => {
+                if (data.event === "RE_LOGIN" && data.status === "success") {
+                    wsService.getUserList(); // Fetch user list after successful re-login
+                    wsService.onMessage(handleNewMessage); // Thiết lập lại sự kiện xử lý tin nhắn sau khi re-login thành công
+                }
+            });
+        } else {
+            wsService.getUserList(); // Fetch user list if no re-login code
         }
 
         return () => {
-            wsService.getUserList(); // Lấy danh sách người dùng khi component unmount
+            // Close WebSocket connection on component unmount
+            wsService.getUserList();
         };
     }, [wsService, dispatch]);
 
@@ -85,6 +96,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
             }
         }
     }, [selectedUser, selectedUserType, wsService]);
+
 
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '' && selectedUser) {
