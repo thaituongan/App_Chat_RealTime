@@ -14,10 +14,11 @@ interface Message {
 
 interface ChatboxProps {
     messages: Message[];
+    username: string;
 }
 
-const Chatbox: FC<ChatboxProps> = ({ messages }) => {
-    const username = useSelector((state: RootState) => state.user.username);
+const Chatbox: FC<ChatboxProps> = ({ messages, username}) => {
+    //const username = useSelector((state: RootState) => state.user.username);
     const chatEndRef = useRef<HTMLDivElement>(null);
 
     // Tự động cuộn xuống để hiển thị tin nhắn mới
