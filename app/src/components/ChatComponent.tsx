@@ -10,7 +10,7 @@ import UserListComponent from './UserListComponent';
 import Chatbox from './Chatbox';
 import InputMessage from './InputMessage';
 import '../styles/style.css';
-import {getReLoginCode, getUsername} from "../untils/localStorageUtils";
+import {getReLoginCode, getUsername, saveReLoginCode} from "../untils/localStorageUtils";
 
 interface ChatComponentProps {
     wsService: WebSocketService;
@@ -75,14 +75,15 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 if (data.event === "RE_LOGIN" && data.status === "success") {
                     wsService.getUserList(); // Fetch user list after successful re-login
                     wsService.onMessage(handleNewMessage); // Thiết lập lại sự kiện xử lý tin nhắn sau khi re-login thành công
+                    saveReLoginCode(userReload, data.data.RE_LOGIN_CODE)
                 }
             });
         } else {
             wsService.getUserList(); // Fetch user list if no re-login code
         }
 
+
         return () => {
-            // Close WebSocket connection on component unmount
             wsService.getUserList();
         };
     }, [wsService, dispatch]);
