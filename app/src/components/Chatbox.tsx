@@ -1,7 +1,5 @@
 import React, { FC, useEffect, useRef } from "react";
 import "../styles/style.css";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/store";
 
 interface Message {
     id: number;
