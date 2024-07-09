@@ -36,7 +36,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     mes: decodeURIComponent(msg.mes)
                 }));
                 dispatch(setChatMessages(decodedMessages.reverse())); // Nếu nhận được tin nhắn nhóm, cập nhật Redux store với các tin nhắn đó
-            } else if (data.event === "NEW_MESSAGE" && data.status === "success") {
+            } else if (data.event === "SEND_CHAT" && data.status === "success") {
                 const newMessage = {
                     ...data.data,
                     mes: decodeURIComponent(data.data.mes)
