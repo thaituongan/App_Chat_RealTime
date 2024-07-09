@@ -10,7 +10,7 @@ import Chatbox from './Chatbox';
 import InputMessage from './InputMessage';
 import '../styles/style.css';
 import { getReLoginCode, getUsername, saveReLoginCode } from '../untils/localStorageUtils';
-import {reLogin as reLoginAction } from '../reducer/userSlice';
+import { reLogin as reLoginAction } from '../reducer/userSlice';
 
 interface ChatComponentProps {
     wsService: WebSocketService;
@@ -38,8 +38,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     ...msg,
                     mes: decodeURIComponent(msg.mes)
                 }));
-
-                dispatch(setChatMessages(decodedMessages.reverse())); // Nếu nhận được tin nhắn nhóm, cập nhật Redux store với các tin nhắn đó
+                dispatch(setChatMessages(decodedMessages.reverse()));
             } else if (data.event === "SEND_CHAT" && data.status === "success") {
                 const newMessage = {
                     ...data.data,
@@ -131,8 +130,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 wsService.sendChatMessage('room', selectedUser, encodedMessage);
             }
 
-            dispatch(addMessage(newMessage));
             setInput('');
+            dispatch(setChatMessages([...messages, newMessage])); // Cập nhật lại messages
         } else {
             console.log('WebSocket connection is not open, input is empty, or no user selected');
         }
