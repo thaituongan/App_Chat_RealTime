@@ -1,40 +1,44 @@
+import {clearReLoginCode, getReLoginCode, getUsername} from '../untils/localStorageUtils';
+
 class WebSocketService {
     private client: WebSocket | null = null;
     private url: string;
     private messageListeners: ((data: any) => void)[] = [];
-    private reconnectHandlers: (() => void)[] = [];
+    private eventHandlers: { [key: string]: (data: any) => void } = {};
 
     constructor(url: string) {
         this.url = url;
-        this.createConnection();  // Khởi tạo kết nối ngay khi tạo đối tượng
+        this.createConnection();
     }
 
-
-    //tao ket noi qua websocket
     private createConnection() {
         this.client = new WebSocket(this.url);
 
         this.client.onopen = () => {
             console.log('WebSocket connection opened');
+            const reloginCode = getReLoginCode();
+            const userReload = getUsername();
+            if (reloginCode && userReload) {
+                this.reLogin(userReload, reloginCode);
+            }
         };
 
         this.client.onclose = () => {
             console.log('WebSocket connection closed');
+            clearReLoginCode();
+
         };
+
         this.client.onmessage = (event) => {
             const data = JSON.parse(event.data);
+            const handler = this.eventHandlers[data.event];
+            if (handler) {
+                handler(data);
+            }
             this.messageListeners.forEach((listener) => listener(data));
         };
-
-        // this.client.onerror = (error) => {
-        //     console.error('WebSocket error:', error);
-        // };
     }
 
-
-
-
-    //ham gui tin nhan
     sendMessage(message: object) {
         if (this.client && this.client.readyState === WebSocket.OPEN) {
             this.client.send(JSON.stringify(message));
@@ -48,14 +52,9 @@ class WebSocketService {
         }
     }
 
-
-    //ham xu li tin nhan nhan duoc
     onMessage(callback: (data: any) => void) {
         if (this.client) {
-
-            this.client.onmessage = (event) => {
-                callback(JSON.parse(event.data));
-            };
+            this.messageListeners.push(callback);
         }
     }
 
@@ -81,7 +80,6 @@ class WebSocketService {
     }
 
     login(user: string, pass: string) {
-        this.createConnection();
         this.sendMessage({
             action: "onchat",
             data: {
@@ -117,7 +115,6 @@ class WebSocketService {
         this.close();
     }
 
-
     getPeopleChatMessages(name: string, page: number) {
         this.sendMessage({
             action: "onchat",
@@ -144,7 +141,7 @@ class WebSocketService {
             }
         });
     }
-    //kiem tra nguoi dung co online hay khong
+
     checkUser(user: string) {
         this.sendMessage({
             action: "onchat",
@@ -156,7 +153,7 @@ class WebSocketService {
             }
         });
     }
-    //lay ra tin nhan tu nhom
+
     getRoomChatMessages(name: string, page: number) {
         this.sendMessage({
             action: "onchat",
@@ -169,7 +166,7 @@ class WebSocketService {
             }
         });
     }
-    //tao phong chat moi
+
     createRoom(name: string) {
         this.sendMessage({
             action: "onchat",
@@ -181,18 +178,16 @@ class WebSocketService {
             }
         });
     }
-    //tham gia vao phong chat
+
     joinRoom(roomName: string) {
-        const message = {
+        this.sendMessage({
             action: "onchat",
             data: {
                 event: "JOIN_ROOM",
                 data: { name: roomName }
             }
-        };
-        this.sendMessage(message);
+        });
     }
-
 
     getUserList() {
         this.sendMessage({
@@ -201,6 +196,10 @@ class WebSocketService {
                 event: "GET_USER_LIST",
             }
         });
+    }
+
+    setEventHandler(event: string, handler: (data: any) => void) {
+        this.eventHandlers[event] = handler;
     }
 }
 

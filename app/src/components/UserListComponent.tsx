@@ -30,7 +30,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         wsService.getUserList();
 
         return () => {
-            wsService.getUserList();
+            //wsService.offMessage(handleUserList);
         };
     }, [wsService, dispatch]);
 
@@ -43,7 +43,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         if (newRoomName.trim() !== '') {
             wsService.createRoom(newRoomName);
             setNewRoomName('');
-            wsService.getUserList(); //cap nhat lai userlist
+            wsService.getUserList(); // Update user list
         }
     };
 
@@ -51,7 +51,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         if (newRoomName.trim() !== '') {
             wsService.joinRoom(newRoomName);
             setNewRoomName('');
-            wsService.getUserList(); // cap nhat lai userlist
+            wsService.getUserList(); // Update user list
         }
     };
 
@@ -67,10 +67,10 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         setSearchQuery(e.target.value);
     };
 
-    const filteredUsers = users.filter(user =>
+    const filteredUsers = users && Array.isArray(users) ? users.filter(user =>
         (filterType === null || user.type === filterType) &&
         user.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    ) : [];
 
     const addTemporaryUser = () => {
         if (searchQuery.trim() !== '') {

@@ -26,12 +26,13 @@ const userSlice = createSlice({
             state.isLoggedIn = false;
             state.reloginCode = '';
         },
-        reLogin: (state, action: PayloadAction<{ reloginCode: string }>) => {
+        reLogin: (state, action: PayloadAction<{ username: string; reloginCode: string }>) => {
+            state.username = action.payload.username;
+            state.isLoggedIn = true;
             state.reloginCode = action.payload.reloginCode;
         }
     }
 });
 
 export const { login, logout, reLogin } = userSlice.actions;
-
 export default userSlice.reducer;
