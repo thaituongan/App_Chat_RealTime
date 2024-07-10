@@ -41,11 +41,13 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 }));
                 dispatch(setChatMessages(decodedMessages.reverse())); // Nếu nhận được tin nhắn nhóm, cập nhật Redux store với các tin nhắn đó
             } else if (data.event === "SEND_CHAT" && data.status === "success") {
-                const newMessage = {
-                    ...data.data,
-                    mes: decodeURIComponent(data.data.mes)
-                };
-                dispatch(addMessage(newMessage)); // Thêm tin nhắn mới vào Redux store
+                if (selectedUser) {
+                    if (selectedUserType === 0) {
+                        wsService.getPeopleChatMessages(selectedUser, 1);
+                    } else if (selectedUserType === 1) {
+                        wsService.getRoomChatMessages(selectedUser, 1);
+                    }
+                }
             } else if (data.event === "GET_USER_LIST" && data.status === "success") {
                 dispatch(setUserList(data.data)); // Nếu nhận được danh sách người dùng, cập nhật Redux store với danh sách đó
             } else if (data.event === "JOIN_ROOM") {
@@ -69,7 +71,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
 
         wsService.onMessage(handleNewMessage); // Thiết lập hàm xử lý khi nhận được tin nhắn từ WebSocket
 
-        //wsService.onMessage(handleNewMessage);
         const userReload = getUsername();
         const reloginCode = getReLoginCode();
         if (reloginCode && userReload) {
@@ -127,14 +128,13 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
             const encodedMessage = encodeURIComponent(input);
 
             if (selectedUserType === 0) {
-                wsService.sendChatMessage('people', selectedUser, encodedMessage);
+                wsService.sendChatMessage('people', selectedUser, encodedMessage); // Gửi tin nhắn cá nhân
             } else if (selectedUserType === 1) {
-                wsService.sendChatMessage('room', selectedUser, encodedMessage);
+                wsService.sendChatMessage('room', selectedUser, encodedMessage); // Gửi tin nhắn nhóm
             }
 
             dispatch(addMessage(newMessage)); // Thêm tin nhắn mới vào Redux store
-            setInput('');
-            dispatch(setChatMessages([...messages, newMessage])); // Cập nhật lại messages
+            setInput(''); // Reset input
         } else {
             console.log('WebSocket connection is not open, input is empty, or no user selected');
         }
