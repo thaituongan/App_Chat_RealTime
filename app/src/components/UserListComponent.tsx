@@ -1,18 +1,10 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
-import { setUserList , updateUserStatus} from '../reducer/userListSlice';
+import { setUserList } from '../reducer/userListSlice';
 import WebSocketService from '../websocket/WebSocketService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faUserCircle } from '@fortawesome/free-solid-svg-icons';
-
-
-interface User {
-    name: string;
-    type: number;
-    actionTime: string;
-    status: boolean;
-}
 
 interface UserListComponentProps {
     wsService: WebSocketService;
@@ -26,54 +18,47 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     const [newRoomName, setNewRoomName] = useState<string>('');
     const [filterType, setFilterType] = useState<number | null>(0);
     const [searchQuery, setSearchQuery] = useState<string>('');
-    const [userNames, setUserNames] = useState<string[]>([]);
 
     useEffect(() => {
-
         const handleUserList = (data: any) => {
             if (data.event === "GET_USER_LIST" && data.status === "success") {
-                const usersWithStatus = data.data.map((user: any) => ({
-                    name: user.name,
-                    type: user.type,
-                    actionTime: user.actionTime,
-                    status: false
+                const usersWithStatus = data.data.map((userResponse: any) => ({
+                    name: userResponse.name,
+                    type: userResponse.type,
+                    actionTime: userResponse.actionTime,
+                    status: userResponse.status,
                 }));
 
                 dispatch(setUserList(usersWithStatus));
-                setUserNames(usersWithStatus.map((user: any) => user.name));
-            }else if (data.event === "CHECK_USER" && data.status === "success") {
-
-                // userNames.forEach((name) => {
-                //     // Thực hiện các hành động với từng `name` ở đây
-                //     dispatch(updateUserStatus({ name: name, status: true }));
-                // });
-
-                dispatch(updateUserStatus({ name: "moclan01", status: true}));
-                dispatch(updateUserStatus({ name: "moclan02", status: true}));
             }
         };
 
         wsService.onMessage(handleUserList);
+        
 
         return () => {
             wsService.getUserList();
         };
     }, [wsService, dispatch]);
 
-
     useEffect(() => {
-        const interval = setInterval(() => {
-            users.forEach(user => {
-                wsService.checkUser(user.name);
-            });
-        }, 10000); // Cập nhật mỗi 10 phút
+        const handleCheckUser = (data: any) => {
+            if (data.event === "CHECK_USER" && data.status === "success") {
+                console.log(`User: ${data.data.user}, Status: ${data.data.status ? 'Online' : 'Offline'}`);
+                const updatedUsers = users.map(user => 
+                    user.name === data.data.user ? { ...user, status: data.data.status } : user
+                );
+                dispatch(setUserList(updatedUsers));
+            }
+        };
 
-        return () => clearInterval(interval);
-    }, [wsService, users]);
+        wsService.onMessage(handleCheckUser);
+    }, [wsService, dispatch, users]);
 
     const handleUserClick = (user: any) => {
         setSelectedUser(user.name);
         onUserSelect(user.name, user.type);
+        wsService.checkUser(user.name);
     };
 
     const handleCreateRoom = () => {
@@ -115,7 +100,6 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                 name: searchQuery,
                 type: 0,
                 actionTime: new Date().toISOString(),
-                status: false
             };
 
             dispatch(setUserList([...users, temporaryUser]));

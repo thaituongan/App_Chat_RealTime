@@ -149,7 +149,7 @@ class WebSocketService {
             data: {
                 event: "CHECK_USER",
                 data: {
-                    user: username
+                    username
                 }
             }
         });
