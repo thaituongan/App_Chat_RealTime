@@ -9,9 +9,14 @@ import UserListComponent from './UserListComponent';
 import Chatbox from './Chatbox';
 import InputMessage from './InputMessage';
 import '../styles/style.css';
-import { getReLoginCode, getUsername, saveReLoginCode } from '../untils/localStorageUtils';
+import {
+    getReLoginCode,
+    getUsername,
+    getUserSelected, getUserType,
+    saveReLoginCode,
+    saveSelectedUser
+} from '../untils/localStorageUtils';
 import { reLogin as reLoginAction } from '../reducer/userSlice';
-
 interface ChatComponentProps {
     wsService: WebSocketService;
 }
@@ -26,20 +31,19 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const [currentUser, setCurrentUser] = useState<string>(username);
 
     useEffect(() => {
-
         const handleNewMessage = (data: any) => {
             if (data.event === "GET_PEOPLE_CHAT_MES" && data.status === "success") {
                 const decodedMessages = data.data.map((msg: any) => ({
                     ...msg,
                     mes: decodeURIComponent(msg.mes)
                 }));
-                dispatch(setChatMessages(decodedMessages.reverse())); // Nếu nhận được tin nhắn cá nhân, cập nhật Redux store với các tin nhắn đó
+                dispatch(setChatMessages(decodedMessages.reverse()));
             } else if (data.event === "GET_ROOM_CHAT_MES" && data.status === "success") {
                 const decodedMessages = data.data.chatData.map((msg: any) => ({
                     ...msg,
                     mes: decodeURIComponent(msg.mes)
                 }));
-                dispatch(setChatMessages(decodedMessages.reverse())); // Nếu nhận được tin nhắn nhóm, cập nhật Redux store với các tin nhắn đó
+                dispatch(setChatMessages(decodedMessages.reverse()));
             } else if (data.event === "SEND_CHAT" && data.status === "success") {
                 if (selectedUser) {
                     if (selectedUserType === 0) {
@@ -49,11 +53,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     }
                 }
             } else if (data.event === "GET_USER_LIST" && data.status === "success") {
-                dispatch(setUserList(data.data)); // Nếu nhận được danh sách người dùng, cập nhật Redux store với danh sách đó
+                dispatch(setUserList(data.data));
             } else if (data.event === "JOIN_ROOM") {
                 if (data.status === "success") {
                     console.log(`Joined room ${data.data.name}`);
-                    setSelectedUser(data.data.name); // Cập nhật phòng đã tham gia
+                    setSelectedUser(data.data.name);
                     setSelectedUserType(1);
                 } else {
                     alert(`Failed to join room: ${data.mes}`);
@@ -61,31 +65,40 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
             } else if (data.event === "CREATE_ROOM") {
                 if (data.status === "success") {
                     console.log(`Created room ${data.data.name}`);
-                    setSelectedUser(data.data.name); // Cập nhật phòng đã tạo
-                    setSelectedUserType(1); //
+                    setSelectedUser(data.data.name);
+                    setSelectedUserType(1);
                 } else {
                     alert(`Failed to create room: ${data.mes}`);
                 }
             }
         };
 
-        wsService.onMessage(handleNewMessage); // Thiết lập hàm xử lý khi nhận được tin nhắn từ WebSocket
+        wsService.onMessage(handleNewMessage);
 
         const userReload = getUsername();
         const reloginCode = getReLoginCode();
+
+        console.log('Retrieved from localStorage:', { userReload, reloginCode });
+
         if (reloginCode && userReload) {
             wsService.reLogin(userReload, reloginCode);
             wsService.onMessage((data: any) => {
+                console.log('WebSocket message received:', data);
+
                 if (data.event === "RE_LOGIN" && data.status === "success") {
                     wsService.getUserList();
                     wsService.onMessage(handleNewMessage);
                     saveReLoginCode(userReload, data.data.RE_LOGIN_CODE);
+                    console.log('Retrieved from localStorage:', { userReload, reloginCode });
                     dispatch(reLoginAction({ username: userReload, reloginCode: data.data.RE_LOGIN_CODE }));
 
                     const name = getUsername();
                     if (name) {
                         setCurrentUser(name);
                     }
+                    setSelectedUser(getUserSelected);
+                    setSelectedUserType(Number(getUserType()));
+
                     if (selectedUser) {
                         if (selectedUserType === 0) {
                             wsService.getPeopleChatMessages(selectedUser, 1);
@@ -93,6 +106,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                             wsService.getRoomChatMessages(selectedUser, 1);
                         }
                     }
+                } else if (data.event === "RE_LOGIN" && data.status !== "success") {
+                    console.log('Re-login failed:', data.mes);
                 }
             });
         } else {
@@ -128,13 +143,13 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
             const encodedMessage = encodeURIComponent(input);
 
             if (selectedUserType === 0) {
-                wsService.sendChatMessage('people', selectedUser, encodedMessage); // Gửi tin nhắn cá nhân
+                wsService.sendChatMessage('people', selectedUser, encodedMessage);
             } else if (selectedUserType === 1) {
-                wsService.sendChatMessage('room', selectedUser, encodedMessage); // Gửi tin nhắn nhóm
+                wsService.sendChatMessage('room', selectedUser, encodedMessage);
             }
 
-            dispatch(addMessage(newMessage)); // Thêm tin nhắn mới vào Redux store
-            setInput(''); // Reset input
+            dispatch(addMessage(newMessage));
+            setInput('');
         } else {
             console.log('WebSocket connection is not open, input is empty, or no user selected');
         }
@@ -147,6 +162,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const handleUserSelect = (username: string, userType: number) => {
         setSelectedUser(username);
         setSelectedUserType(userType);
+        saveSelectedUser(username, userType.toString());
         if (userType === 0) {
             wsService.getPeopleChatMessages(username, 1);
         } else if (userType === 1) {

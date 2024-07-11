@@ -30,7 +30,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         wsService.getUserList();
 
         return () => {
-            //wsService.offMessage(handleUserList);
+
         };
     }, [wsService, dispatch]);
 
