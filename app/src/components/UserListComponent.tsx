@@ -1,10 +1,18 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
-import { setUserList } from '../reducer/userListSlice';
+import { setUserList , updateUserStatus} from '../reducer/userListSlice';
 import WebSocketService from '../websocket/WebSocketService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+
+
+interface User {
+    name: string;
+    type: number;
+    actionTime: string;
+    status: boolean;
+}
 
 interface UserListComponentProps {
     wsService: WebSocketService;
@@ -18,21 +26,50 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     const [newRoomName, setNewRoomName] = useState<string>('');
     const [filterType, setFilterType] = useState<number | null>(0);
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [userNames, setUserNames] = useState<string[]>([]);
 
     useEffect(() => {
+
         const handleUserList = (data: any) => {
             if (data.event === "GET_USER_LIST" && data.status === "success") {
-                dispatch(setUserList(data.data));
+                const usersWithStatus = data.data.map((user: any) => ({
+                    name: user.name,
+                    type: user.type,
+                    actionTime: user.actionTime,
+                    status: false
+                }));
+
+                dispatch(setUserList(usersWithStatus));
+                setUserNames(usersWithStatus.map((user: any) => user.name));
+            }else if (data.event === "CHECK_USER" && data.status === "success") {
+
+                // userNames.forEach((name) => {
+                //     // Thực hiện các hành động với từng `name` ở đây
+                //     dispatch(updateUserStatus({ name: name, status: true }));
+                // });
+
+                dispatch(updateUserStatus({ name: "moclan01", status: true}));
+                dispatch(updateUserStatus({ name: "moclan02", status: true}));
             }
         };
 
         wsService.onMessage(handleUserList);
-        wsService.getUserList();
 
         return () => {
-
+            wsService.getUserList();
         };
     }, [wsService, dispatch]);
+
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            users.forEach(user => {
+                wsService.checkUser(user.name);
+            });
+        }, 10000); // Cập nhật mỗi 10 phút
+
+        return () => clearInterval(interval);
+    }, [wsService, users]);
 
     const handleUserClick = (user: any) => {
         setSelectedUser(user.name);
@@ -78,6 +115,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                 name: searchQuery,
                 type: 0,
                 actionTime: new Date().toISOString(),
+                status: false
             };
 
             dispatch(setUserList([...users, temporaryUser]));
@@ -148,6 +186,11 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                                     <small>{new Date(user.actionTime).toLocaleString()}</small>
                                 </div>
                             </div>
+                            {user.status ? (
+                                <span className="badge bg-success rounded-pill">Online</span>
+                            ) : (
+                                <span className="badge bg-secondary rounded-pill">Offline</span>
+                            )}
                         </li>
                     ))}
                 </ul>
