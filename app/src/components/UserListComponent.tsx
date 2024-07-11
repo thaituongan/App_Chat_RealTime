@@ -22,21 +22,43 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     useEffect(() => {
         const handleUserList = (data: any) => {
             if (data.event === "GET_USER_LIST" && data.status === "success") {
-                dispatch(setUserList(data.data));
+                const usersWithStatus = data.data.map((userResponse: any) => ({
+                    name: userResponse.name,
+                    type: userResponse.type,
+                    actionTime: userResponse.actionTime,
+                    status: userResponse.status,
+                }));
+
+                dispatch(setUserList(usersWithStatus));
             }
         };
 
         wsService.onMessage(handleUserList);
-        wsService.getUserList();
+        
 
         return () => {
-
+            wsService.getUserList();
         };
     }, [wsService, dispatch]);
+
+    useEffect(() => {
+        const handleCheckUser = (data: any) => {
+            if (data.event === "CHECK_USER" && data.status === "success") {
+                console.log(`User: ${data.data.user}, Status: ${data.data.status ? 'Online' : 'Offline'}`);
+                const updatedUsers = users.map(user => 
+                    user.name === data.data.user ? { ...user, status: data.data.status } : user
+                );
+                dispatch(setUserList(updatedUsers));
+            }
+        };
+
+        wsService.onMessage(handleCheckUser);
+    }, [wsService, dispatch, users]);
 
     const handleUserClick = (user: any) => {
         setSelectedUser(user.name);
         onUserSelect(user.name, user.type);
+        wsService.checkUser(user.name);
     };
 
     const handleCreateRoom = () => {
@@ -148,6 +170,11 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                                     <small>{new Date(user.actionTime).toLocaleString()}</small>
                                 </div>
                             </div>
+                            {user.status ? (
+                                <span className="badge bg-success rounded-pill">Online</span>
+                            ) : (
+                                <span className="badge bg-secondary rounded-pill">Offline</span>
+                            )}
                         </li>
                     ))}
                 </ul>

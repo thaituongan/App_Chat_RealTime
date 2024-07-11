@@ -4,6 +4,7 @@ interface User {
     name: string;
     type: number;
     actionTime: string;
+    status?: boolean; 
 }
 
 interface UserListState {
@@ -27,8 +28,16 @@ const userListSlice = createSlice({
         setPage: (state, action: PayloadAction<number>) => {
             state.page = action.payload;
         },
+        updateUserStatus: (state, action: PayloadAction<{ name: string; status: boolean }>) => {
+            const { name, status } = action.payload;
+            const userIndex = state.users.findIndex((user) => user.name === name);
+            console.log("user status :", name, status);
+            if (userIndex !== -1) {
+                state.users[userIndex].status = status;
+            }
+        },
     },
 });
 
-export const { setUserList, setPage } = userListSlice.actions;
+export const { setUserList, setPage, updateUserStatus } = userListSlice.actions;
 export default userListSlice.reducer;
