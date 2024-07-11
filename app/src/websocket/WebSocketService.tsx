@@ -1,4 +1,4 @@
-import {clearReLoginCode, getReLoginCode, getUsername} from '../untils/localStorageUtils';
+import {getReLoginCode, getUsername} from '../untils/localStorageUtils';
 
 class WebSocketService {
     private client: WebSocket | null = null;
@@ -18,6 +18,7 @@ class WebSocketService {
             console.log('WebSocket connection opened');
             const reloginCode = getReLoginCode();
             const userReload = getUsername();
+            console.log(`Relogin attempt: username=${userReload}, code=${reloginCode}`);
             if (reloginCode && userReload) {
                 this.reLogin(userReload, reloginCode);
             }
@@ -25,12 +26,12 @@ class WebSocketService {
 
         this.client.onclose = () => {
             console.log('WebSocket connection closed');
-            clearReLoginCode();
-
+            //clearReLoginCode();
         };
 
         this.client.onmessage = (event) => {
             const data = JSON.parse(event.data);
+            console.log('Received message:', data);
             const handler = this.eventHandlers[data.event];
             if (handler) {
                 handler(data);

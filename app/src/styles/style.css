@@ -116,6 +116,9 @@ body {
     overflow-y: auto;
     max-height: 550px;
 }
+.user-list .card-body{
+    overflow-y: auto;
+}
 
 .message-header {
     display: flex;
@@ -219,8 +222,6 @@ body {
 
 .message-info.other-message {
     text-align: left;
-    /*display: flex;*/
-    /*flex-direction: column;*/
 }
 
 .message-box .other-message {

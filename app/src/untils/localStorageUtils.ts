@@ -10,10 +10,16 @@ export const getReLoginCode = () => {
 export const getUsername = () => {
     return localStorage.getItem('username');
 };
-
-export const clearReLoginCode = () => {
-    localStorage.removeItem('reLoginCode');
-    // localStorage.removeItem('username');
+export const saveSelectedUser = (userSelected: string, userType: string)=>{
+    localStorage.setItem('userSelected', userSelected)
+    localStorage.setItem('userType', userType)
 };
+export const getUserType =() => {
+    return localStorage.getItem('userType');
+};
+export const getUserSelected =() => {
+    return localStorage.getItem('userSelected');
+};
+
 
 
