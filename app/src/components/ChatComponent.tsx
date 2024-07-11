@@ -44,6 +44,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     mes: decodeURIComponent(msg.mes)
                 }));
                 dispatch(setChatMessages(decodedMessages.reverse()));
+
             } else if (data.event === "SEND_CHAT" && data.status === "success") {
                 if (selectedUser) {
                     if (selectedUserType === 0) {
@@ -150,6 +151,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
 
             dispatch(addMessage(newMessage));
             setInput('');
+            wsService.getUserList();
         } else {
             console.log('WebSocket connection is not open, input is empty, or no user selected');
         }
