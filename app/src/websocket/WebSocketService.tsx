@@ -143,13 +143,13 @@ class WebSocketService {
         });
     }
 
-    checkUser(username: string) {
+    checkUser(user: string) {
         this.sendMessage({
             action: "onchat",
             data: {
                 event: "CHECK_USER",
                 data: {
-                    username
+                    user
                 }
             }
         });

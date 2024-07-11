@@ -18,47 +18,50 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     const [newRoomName, setNewRoomName] = useState<string>('');
     const [filterType, setFilterType] = useState<number | null>(0);
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [userName, setUserName] = useState<string[]>([]);
 
     useEffect(() => {
         const handleUserList = (data: any) => {
             if (data.event === "GET_USER_LIST" && data.status === "success") {
-                const usersWithStatus = data.data.map((userResponse: any) => ({
-                    name: userResponse.name,
-                    type: userResponse.type,
-                    actionTime: userResponse.actionTime,
-                    status: userResponse.status,
+                const usersWithStatus = data.data.map((user: any) => ({
+                    name: user.name,
+                    type: user.type,
+                    actionTime: user.actionTime,
+                    status: user.status,
                 }));
-
                 dispatch(setUserList(usersWithStatus));
+
+                const userNames = data.data.map((user: any) => user.name);
+                setUserName(userNames);
             }
+
+            else if (data.event === "CHECK_USER" && data.status === "success") {
+                setUserName(data.data);
+                const { username, status } = data.data;
+                console.log(`User ${username} is ${status}`);
+            }else{
+                console.log("error");
+            }
+
         };
 
         wsService.onMessage(handleUserList);
-        
+
 
         return () => {
             wsService.getUserList();
         };
     }, [wsService, dispatch]);
 
-    useEffect(() => {
-        const handleCheckUser = (data: any) => {
-            if (data.event === "CHECK_USER" && data.status === "success") {
-                console.log(`User: ${data.data.user}, Status: ${data.data.status ? 'Online' : 'Offline'}`);
-                const updatedUsers = users.map(user => 
-                    user.name === data.data.user ? { ...user, status: data.data.status } : user
-                );
-                dispatch(setUserList(updatedUsers));
-            }
-        };
-
-        wsService.onMessage(handleCheckUser);
-    }, [wsService, dispatch, users]);
+    const handleCheckUser = (username: string) => {
+        wsService.checkUser(username);
+    };
 
     const handleUserClick = (user: any) => {
         setSelectedUser(user.name);
         onUserSelect(user.name, user.type);
-        wsService.checkUser(user.name);
+        const test = wsService.checkUser("moclan01");
+        console.log("Test: ", test);
     };
 
     const handleCreateRoom = () => {
@@ -100,6 +103,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                 name: searchQuery,
                 type: 0,
                 actionTime: new Date().toISOString(),
+                status: false,
             };
 
             dispatch(setUserList([...users, temporaryUser]));
@@ -175,6 +179,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                             ) : (
                                 <span className="badge bg-secondary rounded-pill">Offline</span>
                             )}
+                            <button className="btn btn-info btn-sm ms-2" onClick={() => handleCheckUser(user.name)}>Check Status</button>
                         </li>
                     ))}
                 </ul>
