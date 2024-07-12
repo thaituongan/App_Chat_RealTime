@@ -18,7 +18,6 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     const [newRoomName, setNewRoomName] = useState<string>('');
     const [filterType, setFilterType] = useState<number | null>(0);
     const [searchQuery, setSearchQuery] = useState<string>('');
-    const [userName, setUserName] = useState<string[]>([]);
 
     useEffect(() => {
         const handleUserList = (data: any) => {
@@ -30,17 +29,6 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                     status: user.status,
                 }));
                 dispatch(setUserList(usersWithStatus));
-
-                const userNames = data.data.map((user: any) => user.name);
-                setUserName(userNames);
-            }
-
-            else if (data.event === "CHECK_USER" && data.status === "success") {
-                setUserName(data.data);
-                const { username, status } = data.data;
-                console.log(`User ${username} is ${status}`);
-            }else{
-                console.log("error");
             }
 
         };
@@ -52,10 +40,6 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
             wsService.getUserList();
         };
     }, [wsService, dispatch]);
-
-    const handleCheckUser = (username: string) => {
-        wsService.checkUser(username);
-    };
 
     const handleUserClick = (user: any) => {
         setSelectedUser(user.name);
@@ -174,12 +158,6 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                                     <small>{new Date(user.actionTime).toLocaleString()}</small>
                                 </div>
                             </div>
-                            {user.status ? (
-                                <span className="badge bg-success rounded-pill">Online</span>
-                            ) : (
-                                <span className="badge bg-secondary rounded-pill">Offline</span>
-                            )}
-                            <button className="btn btn-info btn-sm ms-2" onClick={() => handleCheckUser(user.name)}>Check Status</button>
                         </li>
                     ))}
                 </ul>
