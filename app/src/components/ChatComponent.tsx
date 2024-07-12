@@ -29,6 +29,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
     const [selectedUserType, setSelectedUserType] = useState<number | null>(null);
     const [currentUser, setCurrentUser] = useState<string>(username);
+    const [userStatus, setUserStatus] = useState<string | null>(null);
 
     useEffect(() => {
         const handleNewMessage = (data: any) => {
@@ -76,6 +77,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 } else {
                     alert(`Failed to create room: ${data.mes}`);
                 }
+            }
+            else if (data.event === "CHECK_USER" && data.status === "success") {
+                setUserStatus(data.data.status ? 'online' : 'offline');
             }
         };
 
@@ -170,6 +174,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         setSelectedUser(username);
         setSelectedUserType(userType);
         saveSelectedUser(username, userType.toString());
+        wsService.checkUser(username);
         if (userType === 0) {
             wsService.getPeopleChatMessages(username, 1);
         } else if (userType === 1) {
@@ -186,7 +191,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                         <UserListComponent wsService={wsService} onUserSelect={handleUserSelect} />
                     </div>
                     <div className='col-md-8 chat-container'>
-                        <Chatbox messages={messages} username={currentUser} selectedUser={selectedUser} />
+                        <Chatbox messages={messages} username={currentUser} selectedUser={selectedUser} userStatus={userStatus} />
                         <InputMessage input={input} onInputChange={handleChange} onSendMessage={handleSendMessage} />
                     </div>
                 </div>
