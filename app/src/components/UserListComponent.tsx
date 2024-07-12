@@ -44,8 +44,6 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     const handleUserClick = (user: any) => {
         setSelectedUser(user.name);
         onUserSelect(user.name, user.type);
-        const test = wsService.checkUser("moclan01");
-        console.log("Test: ", test);
     };
 
     const handleCreateRoom = () => {
