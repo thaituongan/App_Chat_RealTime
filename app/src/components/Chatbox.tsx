@@ -13,9 +13,11 @@ interface Message {
 interface ChatboxProps {
     messages: Message[];
     username: string;
+    selectedUser: string | null;
+    userStatus: string | null;
 }
 
-const Chatbox: FC<ChatboxProps> = ({ messages, username }) => {
+const Chatbox: FC<ChatboxProps> = ({ messages, username, selectedUser, userStatus }) => {
     const chatEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -44,10 +46,16 @@ const Chatbox: FC<ChatboxProps> = ({ messages, username }) => {
     };
 
     return (
-        <div className="chatbox-container">
-            <div className="chatbox">
-                {messages.map(renderMessage)}
-                <div ref={chatEndRef} />
+        <div>
+            <div className="selected-user">
+                <h5>{selectedUser}</h5>
+                <span>{userStatus === 'online' ? '🟢 Online' : '🔴 Offline'}</span>
+            </div>
+            <div className="chatbox-container">
+                <div className="chatbox">
+                    {messages.map(renderMessage)}
+                    <div ref={chatEndRef} />
+                </div>
             </div>
         </div>
     );

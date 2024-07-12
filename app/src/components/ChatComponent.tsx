@@ -29,6 +29,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
     const [selectedUserType, setSelectedUserType] = useState<number | null>(null);
     const [currentUser, setCurrentUser] = useState<string>(username);
+    const [userStatus, setUserStatus] = useState<string | null>(null);
 
     useEffect(() => {
         const handleNewMessage = (data: any) => {
@@ -38,14 +39,16 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     mes: decodeURIComponent(msg.mes)
                 }));
                 dispatch(setChatMessages(decodedMessages.reverse()));
-            } else if (data.event === "GET_ROOM_CHAT_MES" && data.status === "success") {
+            }
+            else if (data.event === "GET_ROOM_CHAT_MES" && data.status === "success") {
                 const decodedMessages = data.data.chatData.map((msg: any) => ({
                     ...msg,
                     mes: decodeURIComponent(msg.mes)
                 }));
                 dispatch(setChatMessages(decodedMessages.reverse()));
 
-            } else if (data.event === "SEND_CHAT" && data.status === "success") {
+            }
+            else if (data.event === "SEND_CHAT" && data.status === "success") {
                 if (selectedUser) {
                     if (selectedUserType === 0) {
                         wsService.getPeopleChatMessages(selectedUser, 1);
@@ -53,9 +56,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                         wsService.getRoomChatMessages(selectedUser, 1);
                     }
                 }
-            } else if (data.event === "GET_USER_LIST" && data.status === "success") {
+            }
+            else if (data.event === "GET_USER_LIST" && data.status === "success") {
                 dispatch(setUserList(data.data));
-            } else if (data.event === "JOIN_ROOM") {
+            }
+            else if (data.event === "JOIN_ROOM") {
                 if (data.status === "success") {
                     console.log(`Joined room ${data.data.name}`);
                     setSelectedUser(data.data.name);
@@ -63,7 +68,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 } else {
                     alert(`Failed to join room: ${data.mes}`);
                 }
-            } else if (data.event === "CREATE_ROOM") {
+            }
+            else if (data.event === "CREATE_ROOM") {
                 if (data.status === "success") {
                     console.log(`Created room ${data.data.name}`);
                     setSelectedUser(data.data.name);
@@ -71,6 +77,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 } else {
                     alert(`Failed to create room: ${data.mes}`);
                 }
+            }
+            else if (data.event === "CHECK_USER" && data.status === "success") {
+                setUserStatus(data.data.status ? 'online' : 'offline');
             }
         };
 
@@ -165,6 +174,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         setSelectedUser(username);
         setSelectedUserType(userType);
         saveSelectedUser(username, userType.toString());
+        wsService.checkUser(username);
         if (userType === 0) {
             wsService.getPeopleChatMessages(username, 1);
         } else if (userType === 1) {
@@ -181,7 +191,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                         <UserListComponent wsService={wsService} onUserSelect={handleUserSelect} />
                     </div>
                     <div className='col-md-8 chat-container'>
-                        <Chatbox messages={messages} username={currentUser} />
+                        <Chatbox messages={messages} username={currentUser} selectedUser={selectedUser} userStatus={userStatus} />
                         <InputMessage input={input} onInputChange={handleChange} onSendMessage={handleSendMessage} />
                     </div>
                 </div>
