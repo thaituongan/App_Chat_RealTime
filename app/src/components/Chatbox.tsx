@@ -48,7 +48,7 @@ const Chatbox: FC<ChatboxProps> = ({ messages, username, selectedUser, userStatu
     return (
         <div>
             <div className="selected-user">
-                <h5>{selectedUser}</h5>
+                <p><strong>{selectedUser}</strong></p>
                 <span>{userStatus === 'online' ? '🟢 Online' : '🔴 Offline'}</span>
             </div>
             <div className="chatbox-container">

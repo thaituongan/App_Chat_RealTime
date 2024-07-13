@@ -12,7 +12,6 @@ const HeaderChat: React.FC<HeaderChatProps> = ({ username, wsService }) => {
     return (
         <nav className="navbar navbar-expand-lg navbar">
             <div className="container">
-                <span className="navbar-brand">App Chat Realtime</span>
                 <div className="collapse navbar-collapse justify-content-end">
                     <ul className="navbar-nav">
                         <li className="nav-item">

@@ -17,6 +17,8 @@ import {
     saveSelectedUser
 } from '../untils/localStorageUtils';
 import { reLogin as reLoginAction } from '../reducer/userSlice';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faList, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 interface ChatComponentProps {
     wsService: WebSocketService;
 }
@@ -185,9 +187,14 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     return (
         <div className="chat-app">
             <HeaderChat username={currentUser} wsService={wsService} />
-            <div className='container mt-3'>
+            <div className='container'>
                 <div className='row'>
-                    <div className='col-md-4'>
+                    <div className='col-md-4 user-list-box'>
+                        <div className='currentUser d-flex align-items-center ms-4 me-4 mt-3 mb-3'>
+                            <FontAwesomeIcon icon={faUserCircle} className="me-xxl-3 fa-2xl" />
+                            <strong className="me-5">{currentUser}</strong>
+                            <FontAwesomeIcon icon={faList} className="me-xxl-3 fa-list-icon fa-1xl ms-auto"/>
+                        </div>
                         <UserListComponent wsService={wsService} onUserSelect={handleUserSelect} />
                     </div>
                     <div className='col-md-8 chat-container'>
