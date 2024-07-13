@@ -47,8 +47,8 @@ const Chatbox: FC<ChatboxProps> = ({ messages, username, selectedUser, userStatu
                 {shouldDisplayDateAndName && (
                     <div className={`message-info ${message.name === username ? "my-message" : "other-message"}`}>
                         <span className="message-sender">{message.name}</span>
-                        {/* <span className="message-time">{new Date(message.createAt).toLocaleString()}</span> */}
-                        <span className="message-time" title={messageDate.toLocaleTimeString()}>{messageDate.toLocaleDateString()}</span>
+                        <span className="message-time">{new Date(message.createAt).toLocaleString()}</span>
+                        {/* <span className="message-time" title={messageDate.toLocaleTimeString()}>{messageDate.toLocaleDateString()}</span> */}
                     </div>
                 )}
                 <div className={`message ${message.name === username ? "my-message" : "other-message"}`}>
