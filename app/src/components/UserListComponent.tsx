@@ -4,7 +4,7 @@ import { RootState } from '../store/store';
 import { setUserList } from '../reducer/userListSlice';
 import WebSocketService from '../websocket/WebSocketService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faMagnifyingGlass, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 interface UserListComponentProps {
     wsService: WebSocketService;
@@ -13,6 +13,7 @@ interface UserListComponentProps {
 
 const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUserSelect }) => {
     const dispatch = useDispatch();
+    const username = useSelector((state: RootState) => state.user.username)
     const users = useSelector((state: RootState) => state.userList.users);
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
     const [newRoomName, setNewRoomName] = useState<string>('');
@@ -102,18 +103,21 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     return (
         <div className="user-list card">
             <div className="card-header d-flex justify-content-between align-items-center">
-                <div className="input-group">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Name of Room or People"
-                        value={searchQuery}
-                        onChange={handleSearchQueryChange}
-                        onKeyPress={handleKeyPress}
-                    />
-                    <div className="input-group-text">
+                <div className="search">
+                    <div className='search-bar d-flex'>
+                        <FontAwesomeIcon icon={faMagnifyingGlass} className='fa-lg ' />
                         <input
-                            className="form-check-input mt-0"
+                            type="text"
+                            className="form-control"
+                            placeholder="Search"
+                            value={searchQuery}
+                            onChange={handleSearchQueryChange}
+                            onKeyPress={handleKeyPress}
+                        />
+                    </div>
+                    <div className="group-checkbox me-4">
+                        <input
+                            className="form-check-input me-1"
                             type="checkbox"
                             onChange={() => handleFilterChange(filterType === 1 ? 0 : 1)}
                         />
@@ -130,16 +134,18 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                         <input
                             type="text"
                             className="form-control"
-                            placeholder="New Room Name"
                             value={newRoomName}
                             onChange={handleRoomNameChange}
                         />
-                        <button className="btn btn-outline-primary mt-2 " onClick={handleCreateRoom}>
-                            Create Room
-                        </button>
-                        <button className="btn btn-outline-primary mt-2" onClick={handleJoinRoom}>
-                            Join Room
-                        </button>
+                        <div className='group-btn'>
+                            <button className="btn btn-outline-primary create-btn mt-2 me-2" onClick={handleCreateRoom}>
+                                Create Room
+                            </button>
+                            <button className="btn btn-outline-primary join-btn mt-2" onClick={handleJoinRoom}>
+                                Join Room
+                            </button>
+                        </div>
+
                     </div>
                 )}
                 <ul className="list-group">
