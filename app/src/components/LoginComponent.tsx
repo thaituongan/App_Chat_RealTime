@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, {useState, ChangeEvent, KeyboardEvent} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login as loginAction } from '../reducer/userSlice';
@@ -20,7 +20,11 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
     const handleToRegister = () => {
         navigate('/register');
     };
-
+    const  handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            handleLogin()
+        }
+    };
     const handleLogin = () => {
         if (wsService) {
             if (password ==='' || username==='') {
@@ -56,6 +60,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
                         className="login-input"
                         placeholder="username"
                         value={username}
+                        onKeyPress={handleKeyPress}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
                     />
                 </div>
@@ -66,10 +71,12 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
                         className="login-input"
                         placeholder="Password"
                         value={password}
+                        onKeyPress={handleKeyPress}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                     />
                 </div>
-                <button className="login-button" onClick={handleLogin}>Sign In</button>
+                <button className="login-button" onClick={handleLogin}
+                        >Sign In</button>
                 <div className="register-link">
                     No account? <span onClick={handleToRegister} className="register-link-text">Register</span>
                 </div>

@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, {useState, ChangeEvent, KeyboardEvent} from 'react';
 import { useNavigate } from 'react-router-dom';
 import WebSocketService from '../websocket/WebSocketService';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -18,9 +18,18 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
     const handleToLogin = () => {
         navigate('/login');
     };
+    const  handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            handleRegister()
+        }
+    };
 
     const handleRegister = () => {
-        if (password !== confirmPassword) {
+        if (username ==='' || password==='' || confirmPassword===''){
+            setError('Please enter info!');
+            return;
+        }
+        else if (password !== confirmPassword) {
             setError('Passwords do not match');
             return;
         }
@@ -52,6 +61,7 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
                             className="register-input"
                             placeholder="Username"
                             value={username}
+                            onKeyPress={handleKeyPress}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
                         />
                     </div>
@@ -62,6 +72,7 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
                             className="register-input"
                             placeholder="Password"
                             value={password}
+                            onKeyPress={handleKeyPress}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                         />
                     </div>
@@ -72,6 +83,7 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
                             className="register-input"
                             placeholder="Confirm Password"
                             value={confirmPassword}
+                            onKeyPress={handleKeyPress}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
                         />
                     </div>
