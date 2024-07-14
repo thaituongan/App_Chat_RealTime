@@ -27,11 +27,13 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
     };
     const handleLogin = () => {
         if (wsService) {
-            if (password ==='' || username==='') {
-                setError('Please enter info!');
+            if (username==='') {
+                setError('Please enter username!');
+                return;
+            }else if (password===''){
+                setError('Please enter password!');
                 return;
             }
-
             wsService.login(username, password);
             wsService.onMessage((data: any) => {
                 if (data.status === 'success' && data.event === 'LOGIN') {

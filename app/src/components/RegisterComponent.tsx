@@ -25,8 +25,11 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
     };
 
     const handleRegister = () => {
-        if (username ==='' || password==='' || confirmPassword===''){
-            setError('Please enter info!');
+        if (username==='') {
+            setError('Please enter username!');
+            return;
+        }else if (password===''){
+            setError('Please enter password!');
             return;
         }
         else if (password !== confirmPassword) {
