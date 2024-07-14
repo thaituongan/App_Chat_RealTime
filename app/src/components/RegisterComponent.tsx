@@ -101,7 +101,6 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
                     </div>
                 </div>
             </div>
-            //hien thi thong bao dang ki tai khoan thanh cong
             {showPopup && (
                 <div className="popup-overlay">
                     <div className="popup-content">

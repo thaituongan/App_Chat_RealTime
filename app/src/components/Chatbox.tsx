@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useRef } from "react";
 import "../styles/style.css";
-import {useDispatch} from "react-redux";
-import {setChatMessages} from "../reducer/chatSlice";
+import { faCircleInfo, faPhone, faUserCircle, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface Message {
     id: number;
@@ -21,6 +21,13 @@ interface ChatboxProps {
 
 const Chatbox: FC<ChatboxProps> = ({ messages, username, selectedUser, userStatus }) => {
     const chatEndRef = useRef<HTMLDivElement>(null);
+    const addHoursToDate = (date: string, hours: number): string => {
+        const result = new Date(date);
+        result.setHours(result.getHours() + hours);
+        return result.toLocaleString();
+    };
+
+
     const scrollToBottom = () => {
         if (chatEndRef.current) {
             chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -31,21 +38,17 @@ const Chatbox: FC<ChatboxProps> = ({ messages, username, selectedUser, userStatu
         scrollToBottom();
     }, [messages]);
 
-    const addHoursToDate = (date: string, hours: number): Date => {
-        const result = new Date(date);
-        result.setHours(result.getHours() + hours);
-        return result;
-    };
 
     const renderMessage = (message: Message) => {
         const convertedMessage = decodeURIComponent(message.mes);
-        const adjustedDate = addHoursToDate(message.createAt, 7);
+
         return (
             <div key={message.id} className={`message-box ${message.name === username ? "my-message" : "other-message"}`}>
-                <div className={`message-info ${message.name === username ? "my-message" : "other-message"}`}>
-                    <span className="message-sender">{message.name}</span>
-                    <span className="message-time">{adjustedDate.toLocaleString()}</span>
-                </div>
+
+                    <div className={`message-info ${message.name === username ? "my-message" : "other-message"}`}>
+                        <span className="message-sender">{message.name}</span>
+                        <span className="message-time">{addHoursToDate(message.createAt, 7)}</span>
+                    </div>
                 <div className={`message ${message.name === username ? "my-message" : "other-message"}`}>
                     {convertedMessage}
                 </div>
@@ -55,9 +58,19 @@ const Chatbox: FC<ChatboxProps> = ({ messages, username, selectedUser, userStatu
 
     return (
         <div>
-            <div className="selected-user">
-                <p><strong>{selectedUser}</strong></p>
-                <span>{userStatus === 'online' ? '🟢 Online' : '🔴 Offline'}</span>
+            <div className="selected-user d-flex">
+                <div className="d-flex">
+                    <FontAwesomeIcon icon={faUserCircle} className="me-xxl-3 fa-2xl ms-4 icon" />
+                    <div className="user">
+                        <p>{selectedUser}</p>
+                        <span>{userStatus === 'online' ? '🟢 Online' : '🔴 Offline'}</span>
+                    </div>
+                </div>
+                <div className="other-icon d-flex">
+                    <FontAwesomeIcon icon={faPhone} />
+                    <FontAwesomeIcon icon={faVideo} />
+                    <FontAwesomeIcon icon={faCircleInfo} />
+                </div>
             </div>
             <div className="chatbox-container">
                 <div className="chatbox">
