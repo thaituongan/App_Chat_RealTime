@@ -16,13 +16,18 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
     const [password, setPassword] = useState<string>('');
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
+    const [error, setError] = useState<string>('');
     const handleToRegister = () => {
         navigate('/register');
     };
 
     const handleLogin = () => {
         if (wsService) {
+            if (password ==='' || username==='') {
+                setError('Please enter info!');
+                return;
+            }
+
             wsService.login(username, password);
             wsService.onMessage((data: any) => {
                 if (data.status === 'success' && data.event === 'LOGIN') {
@@ -32,6 +37,8 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
                     navigate('/chat', { state: { username } });
                 } else {
                     console.log('Login failed');
+                        setError('Login failed: ' + data.message);
+                        return
                 }
             });
         }
@@ -41,7 +48,8 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
         <div className="login-body">
         <div className="login-container">
             <div className="login-card">
-                <h2 className="login-title"><b>Welcome!</b></h2>
+                <h2 className="login-title"><b>Login</b></h2>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
                 <div className="form-group">
                     <input
                         type="text"

@@ -2,6 +2,8 @@ import React, { useState, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WebSocketService from '../websocket/WebSocketService';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/style.css'; // Import the new CSS file
+
 interface RegisterComponentProps {
     wsService: WebSocketService | null;
 }
@@ -12,6 +14,10 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
     const navigate = useNavigate();
+
+    const handleToLogin = () => {
+        navigate('/login');
+    };
 
     const handleRegister = () => {
         if (password !== confirmPassword) {
@@ -24,7 +30,7 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
             wsService.onMessage((data: any) => {
                 if (data.status === 'success') {
                     console.log('Registration success');
-                    navigate('/login'); // Chuyển hướng đến trang đăng nhập sau khi đăng ký thành công
+                    navigate('/login'); // Navigate to login page after successful registration
                 } else {
                     console.log('Registration failed');
                     setError('Registration failed: ' + data.message);
@@ -34,50 +40,44 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
     };
 
     return (
-        <div className="container mt-5">
-            <div className="row justify-content-center">
-                <div className="col-md-6">
-                    <div className="card">
-                        <div className="card-body">
-                            <h2 className="card-title text-center">Register</h2>
-                            <div className="form-group">
-                                <label htmlFor="username">Username</label>
-                                <input
-                                    type="text"
-                                    id="username"
-                                    className="form-control"
-                                    placeholder="Username"
-                                    value={username}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="password">Password</label>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    className="form-control"
-                                    placeholder="Password"
-                                    value={password}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="confirmPassword">Confirm Password</label>
-                                <input
-                                    type="password"
-                                    id="confirmPassword"
-                                    className="form-control"
-                                    placeholder="Confirm Password"
-                                    value={confirmPassword}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
-                                />
-                            </div>
-                            {error && <p style={{ color: 'red' }}>{error}</p>}
-                            <div className="text-center mt-3">
-                                <button className="btn btn-primary" onClick={handleRegister}>Register</button>
-                            </div>
-                        </div>
+        <div className="register-body">
+            <div className="register-container">
+                <div className="register-card">
+                    <h2 className="register-title"><b>Register</b></h2>
+                    <div className="form-group">
+                        <input
+                            type="text"
+                            id="username"
+                            className="register-input"
+                            placeholder="Username"
+                            value={username}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <input
+                            type="password"
+                            id="password"
+                            className="register-input"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            className="register-input"
+                            placeholder="Confirm Password"
+                            value={confirmPassword}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
+                        />
+                    </div>
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                    <button className="register-button" onClick={handleRegister}>Sign Up</button>
+                    <div className="login-link">
+                        Already have an account? <span onClick={handleToLogin} className="login-link-text">Login</span>
                     </div>
                 </div>
             </div>

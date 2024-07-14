@@ -2,6 +2,7 @@
 :root {
     --b-0: rgba(255, 255, 255, 1);
     --paragraph: rgba(123, 129, 140, 1);
+    --error-color: rgba(255, 0, 0, 0.8);
 }
 
 
@@ -486,4 +487,86 @@ p {
 
 .login-button:hover {
     background-color: #0056b3;
+}
+.register-body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+}
+
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(5px);
+}
+
+.register-card {
+    background-color: rgba(17, 25, 40, 0.75);
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    color: white;
+}
+
+.register-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.register-input {
+    width: 100%;
+    padding: 16px;
+    outline: none;
+    border: none;
+    font-size: 16px;
+    background-color: rgba(17, 25, 40, 0.7);
+    color: white;
+}
+
+.register-input::placeholder {
+    color: #ccc;
+}
+
+.register-button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.register-button:hover {
+    background-color: #0056b3;
+}
+
+.login-link {
+    margin-top: 20px;
+    color: white;
+}
+
+.login-link-text {
+    color: #007bff;
+    cursor: pointer;
+}
+
+.login-link-text:hover {
+    text-decoration: underline;
 }
