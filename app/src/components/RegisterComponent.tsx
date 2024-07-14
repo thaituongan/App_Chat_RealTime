@@ -1,9 +1,8 @@
-import React, {useState, ChangeEvent, KeyboardEvent} from 'react';
+import React, { useState, ChangeEvent, KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WebSocketService from '../websocket/WebSocketService';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/style.css'; // Import the new CSS file
-
+import '../styles/style.css';
 interface RegisterComponentProps {
     wsService: WebSocketService | null;
 }
@@ -13,26 +12,27 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
+    const [showPopup, setShowPopup] = useState<boolean>(false);
     const navigate = useNavigate();
 
     const handleToLogin = () => {
         navigate('/login');
     };
-    const  handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Enter") {
-            handleRegister()
+
+    const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            handleRegister();
         }
     };
 
     const handleRegister = () => {
-        if (username==='') {
+        if (username === '') {
             setError('Please enter username!');
             return;
-        }else if (password===''){
+        } else if (password === '') {
             setError('Please enter password!');
             return;
-        }
-        else if (password !== confirmPassword) {
+        } else if (password !== confirmPassword) {
             setError('Passwords do not match');
             return;
         }
@@ -40,15 +40,20 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
         if (wsService) {
             wsService.register(username, password);
             wsService.onMessage((data: any) => {
-                if (data.status === 'success') {
-                    console.log('Registration success');
-                    navigate('/login'); // Navigate to login page after successful registration
+                if (data.status === 'success' && data.event === 'REGISTER') {
+                    setError('');
+                    setShowPopup(true); // Show the popup
                 } else {
                     console.log('Registration failed');
-                    setError('Registration failed: ' + data.message);
+                    setError('Account already exists');
                 }
             });
         }
+    };
+
+    const handlePopupClose = () => {
+        setShowPopup(false);
+        navigate('/login');
     };
 
     return (
@@ -96,6 +101,16 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
                     </div>
                 </div>
             </div>
+            //hien thi thong bao dang ki tai khoan thanh cong
+            {showPopup && (
+                <div className="popup-overlay">
+                    <div className="popup-content">
+                        <h3>Successfully Registered</h3>
+                        <p>Going to Login?</p>
+                        <button className="popup-button btn btn-primary" onClick={handlePopupClose}>OK</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

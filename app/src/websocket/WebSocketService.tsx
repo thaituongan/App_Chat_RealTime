@@ -113,7 +113,6 @@ class WebSocketService {
                 event: "LOGOUT"
             }
         });
-        this.close();
     }
 
     getPeopleChatMessages(name: string, page: number) {

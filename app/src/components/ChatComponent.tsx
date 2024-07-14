@@ -143,25 +143,20 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
 
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '' && selectedUser) {
-            const newMessage = {
-                id: Date.now(),
-                name: username,
-                type: 0,
-                to: selectedUser,
-                mes: input,
-                createAt: new Date().toISOString(),
-            };
-
             const encodedMessage = encodeURIComponent(input);
-
+            //gui tin nhan
             if (selectedUserType === 0) {
                 wsService.sendChatMessage('people', selectedUser, encodedMessage);
             } else if (selectedUserType === 1) {
                 wsService.sendChatMessage('room', selectedUser, encodedMessage);
             }
-
-            dispatch(addMessage(newMessage));
             setInput('');
+            //cap nhat lai tin nhan
+            if (selectedUserType === 0) {
+                wsService.getPeopleChatMessages(selectedUser, 1);
+            } else if (selectedUserType === 1) {
+                wsService.getRoomChatMessages(selectedUser, 1);
+            }
             wsService.getUserList();
         } else {
             console.log('WebSocket connection is not open, input is empty, or no user selected');

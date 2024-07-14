@@ -19,7 +19,11 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     const [newRoomName, setNewRoomName] = useState<string>('');
     const [filterType, setFilterType] = useState<number | null>(0);
     const [searchQuery, setSearchQuery] = useState<string>('');
-
+    const addHoursToDate = (date: string, hours: number): string => {
+        const result = new Date(date);
+        result.setHours(result.getHours() + hours);
+        return result.toLocaleString();
+    };
     useEffect(() => {
         const handleUserList = (data: any) => {
             if (data.event === "GET_USER_LIST" && data.status === "success") {
@@ -159,7 +163,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                                 <FontAwesomeIcon icon={faUserCircle} className="me-xxl-3 fa-home-user fa-2xl" />
                                 <div>
                                     <strong>{user.name}</strong><br />
-                                    <small>{new Date(user.actionTime).toLocaleString()}</small>
+                                    <small>{addHoursToDate(user.actionTime, 7)}</small>
                                 </div>
                             </div>
                         </li>

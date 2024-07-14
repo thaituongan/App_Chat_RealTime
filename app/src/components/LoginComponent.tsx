@@ -37,13 +37,15 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
             wsService.login(username, password);
             wsService.onMessage((data: any) => {
                 if (data.status === 'success' && data.event === 'LOGIN') {
+                    setError('')
                     const reloginCode = data.data.RE_LOGIN_CODE;
                     saveReLoginCode(username, reloginCode); // Save reloginCode to localStorage
                     dispatch(loginAction({ username, reloginCode }));
                     navigate('/chat', { state: { username } });
                 } else {
                     console.log('Login failed');
-                        setError('Login failed: ' + data.message);
+                        setError('Invalid Account');
+                        return
                 }
             });
         }
