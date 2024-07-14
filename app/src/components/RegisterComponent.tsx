@@ -44,6 +44,7 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
             <div className="register-container">
                 <div className="register-card">
                     <h2 className="register-title"><b>Register</b></h2>
+                    {error && <p className="error-message">{error}</p>}
                     <div className="form-group">
                         <input
                             type="text"
@@ -74,7 +75,6 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({ wsService }) => {
                             onChange={(e: ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
                         />
                     </div>
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
                     <button className="register-button" onClick={handleRegister}>Sign Up</button>
                     <div className="login-link">
                         Already have an account? <span onClick={handleToLogin} className="login-link-text">Login</span>

@@ -38,7 +38,6 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
                 } else {
                     console.log('Login failed');
                         setError('Login failed: ' + data.message);
-                        return
                 }
             });
         }
@@ -49,7 +48,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ wsService }) => {
         <div className="login-container">
             <div className="login-card">
                 <h2 className="login-title"><b>Login</b></h2>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {error && <p className="error-message">{error}</p>}
                 <div className="form-group">
                     <input
                         type="text"
