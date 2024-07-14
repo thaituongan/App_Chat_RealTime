@@ -1,6 +1,7 @@
 import React from 'react';
 import LogoutComponent from "./LogoutComponent";
 import WebSocketService from '../websocket/WebSocketService';
+import '../styles/style.css';
 
 interface HeaderChatProps {
     username: string;

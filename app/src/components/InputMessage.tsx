@@ -1,6 +1,9 @@
 import React, { ChangeEvent, FC, KeyboardEvent, useState, useRef, useEffect } from "react";
 import "../styles/style.css";
 import EmojiPickerPortal from './EmojiPickerPortalProps';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFaceSmile, faImage, faMicrophone } from "@fortawesome/free-solid-svg-icons";
+
 
 interface InputMessageProps {
     input: string;
@@ -45,47 +48,34 @@ export const InputMessage: FC<InputMessageProps> = ({ input, onInputChange, onSe
     };
 
     return (
-        <div className="input-message-container">
+        <div className="input-message-box">
+            <div className="icon">
+                <FontAwesomeIcon icon={faImage} />
+                <FontAwesomeIcon icon={faMicrophone} />
+            </div>
             <div className="input-message">
-                <div className="input-message-bar">
-                    <div className="type-message">
-                        <div className="md-attach-file-screen">
-                            <img className="attch-icon" alt="Attach icon" src="/MdAttachFile.png" />
-                        </div>
-                        <input
-                            type="text"
-                            placeholder="Type a message..."
-                            className="form-control text-wrapper"
-                            value={displayInputValue}
-                            onChange={handleChange}
-                            onKeyPress={handleKeyPress}
-                            ref={inputRef}
-                        />
-                    </div>
-                    <div className="option-frame">
-                        <div className="fomat-mess">
-                            <div className="icon">
-                                <img
-                                    className="happy"
-                                    alt="Happy"
-                                    src="/happy-1.png"
-                                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                                />
-                                <EmojiPickerPortal
-                                    show={showEmojiPicker}
-                                    onEmojiClick={onEmojiClick}
-                                    onClose={() => setShowEmojiPicker(false)}
-                                />
-                            </div>
-                            <div className="box">
-                                <img className="microphone" alt="Microphone" src="/Microphone%201.png" />
-                            </div>
-                        </div>
-                        <button className="btn btn-primary send-btn bg-white border-opacity-10" onClick={handleSendClick}>
-                            <img className="vector" alt="Send" src="/HiPaperAirplane.jpg" />
-                        </button>
-                    </div>
-                </div>
+                <input
+                    type="text"
+                    placeholder="Type a message..."
+                    className="form-control text-wrapper"
+                    value={displayInputValue}
+                    onChange={handleChange}
+                    onKeyPress={handleKeyPress}
+                    ref={inputRef}
+                />
+            </div>
+            <div className="emoji">
+                <FontAwesomeIcon icon={faFaceSmile} onClick={() => setShowEmojiPicker(!showEmojiPicker)}/>
+                <EmojiPickerPortal
+                    show={showEmojiPicker}
+                    onEmojiClick={onEmojiClick}
+                    onClose={() => setShowEmojiPicker(false)}
+                />
+            </div>
+            <div className="send-btn me-2">
+            <button className="btn btn-primary send-btn bg-white border-opacity-10" onClick={handleSendClick}>
+                <img className="vector" alt="Send" src="/HiPaperAirplane.jpg" />
+            </button>
             </div>
         </div>
     );
