@@ -21,7 +21,11 @@ interface ChatboxProps {
 
 const Chatbox: FC<ChatboxProps> = ({ messages, username, selectedUser, userStatus }) => {
     const chatEndRef = useRef<HTMLDivElement>(null);
-    const lastDisplayedDateAndName = useRef<string | null>(null);
+    const addHoursToDate = (date: string, hours: number): string => {
+        const result = new Date(date);
+        result.setHours(result.getHours() + hours);
+        return result.toLocaleString();
+    };
 
 
     const scrollToBottom = () => {
@@ -38,21 +42,13 @@ const Chatbox: FC<ChatboxProps> = ({ messages, username, selectedUser, userStatu
     const renderMessage = (message: Message) => {
         const convertedMessage = decodeURIComponent(message.mes);
 
-        const currentDateAndName = new Date(message.createAt).toDateString() + message.name;
-        const shouldDisplayDateAndName = currentDateAndName !== lastDisplayedDateAndName.current;
-        lastDisplayedDateAndName.current = currentDateAndName;
-        const messageDate = new Date(message.createAt);
-        const messageTime = `${messageDate.getHours()}:${messageDate.getMinutes()}:${messageDate.getSeconds()}`;
-
         return (
             <div key={message.id} className={`message-box ${message.name === username ? "my-message" : "other-message"}`}>
-                {shouldDisplayDateAndName && (
+
                     <div className={`message-info ${message.name === username ? "my-message" : "other-message"}`}>
                         <span className="message-sender">{message.name}</span>
-                        <span className="message-time">{new Date(message.createAt).toLocaleString()}</span>
-                        {/* <span className="message-time" title={messageDate.toLocaleTimeString()}>{messageDate.toLocaleDateString()}</span> */}
+                        <span className="message-time">{addHoursToDate(message.createAt, 7)}</span>
                     </div>
-                )}
                 <div className={`message ${message.name === username ? "my-message" : "other-message"}`}>
                     {convertedMessage}
                 </div>
