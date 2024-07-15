@@ -13,7 +13,6 @@ interface UserListComponentProps {
 
 const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUserSelect }) => {
     const dispatch = useDispatch();
-    const username = useSelector((state: RootState) => state.user.username)
     const users = useSelector((state: RootState) => state.userList.users);
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
     const [newRoomName, setNewRoomName] = useState<string>('');
@@ -35,7 +34,6 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                 }));
                 dispatch(setUserList(usersWithStatus));
             }
-
         };
 
         wsService.onMessage(handleUserList);
@@ -55,7 +53,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         if (newRoomName.trim() !== '') {
             wsService.createRoom(newRoomName);
             setNewRoomName('');
-            wsService.getUserList(); // Update user list
+            wsService.getUserList(); // cap  user list
         }
     };
 
@@ -63,7 +61,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         if (newRoomName.trim() !== '') {
             wsService.joinRoom(newRoomName);
             setNewRoomName('');
-            wsService.getUserList(); // Update user list
+            wsService.getUserList(); // cap nhat user list
         }
     };
 

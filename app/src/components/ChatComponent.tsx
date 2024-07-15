@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
-import { addMessage, setChatMessages } from '../reducer/chatSlice';
+import { setChatMessages } from '../reducer/chatSlice';
 import { setUserList } from '../reducer/userListSlice';
 import WebSocketService from '../websocket/WebSocketService';
 import HeaderChat from './HeaderChat';
@@ -34,6 +34,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
     const [userStatus, setUserStatus] = useState<string | null>(null);
 
     useEffect(() => {
+        //ham xu li khi co tin nhan moi
         const handleNewMessage = (data: any) => {
             if (data.event === "GET_PEOPLE_CHAT_MES" && data.status === "success") {
                 const decodedMessages = data.data.map((msg: any) => ({
@@ -50,7 +51,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 dispatch(setChatMessages(decodedMessages.reverse()));
 
             }
+            //xu li gui tin nhan
             else if (data.event === "SEND_CHAT" && data.status === "success") {
+                //dung get chat message de cap nhat lai tin nhan sau khi gui
                 if (selectedUser) {
                     if (selectedUserType === 0) {
                         wsService.getPeopleChatMessages(selectedUser, 1);
@@ -59,9 +62,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     }
                 }
             }
+            //xu li lay danh sach user
             else if (data.event === "GET_USER_LIST" && data.status === "success") {
                 dispatch(setUserList(data.data));
             }
+            //xu li join room
             else if (data.event === "JOIN_ROOM") {
                 if (data.status === "success") {
                     console.log(`Joined room ${data.data.name}`);
@@ -71,6 +76,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     alert(`Failed to join room: ${data.mes}`);
                 }
             }
+            //xu li tao phong
             else if (data.event === "CREATE_ROOM") {
                 if (data.status === "success") {
                     console.log(`Created room ${data.data.name}`);
@@ -80,19 +86,19 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     alert(`Failed to create room: ${data.mes}`);
                 }
             }
+            //xu li check trang thai hoat dong cua user
             else if (data.event === "CHECK_USER" && data.status === "success") {
                 setUserStatus(data.data.status ? 'online' : 'offline');
             }
         };
 
         wsService.onMessage(handleNewMessage);
-
         const userReload = getUsername();
         const reloginCode = getReLoginCode();
-
-        console.log('Retrieved from localStorage:', { userReload, reloginCode });
-
+        console.log('Retrieved from localStorage:', { userReload, reloginCode })
+        //xu li relogin khi bi mat ket noi hoac reload trang
         if (reloginCode && userReload) {
+            //dung userReload va reloginCode da luu tu localStorage de relogin
             wsService.reLogin(userReload, reloginCode);
             wsService.onMessage((data: any) => {
                 console.log('WebSocket message received:', data);
@@ -100,6 +106,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 if (data.event === "RE_LOGIN" && data.status === "success") {
                     wsService.getUserList();
                     wsService.onMessage(handleNewMessage);
+                    //luu lai RE_LOGIN_CODE moi
                     saveReLoginCode(userReload, data.data.RE_LOGIN_CODE);
                     console.log('Retrieved from localStorage:', { userReload, reloginCode });
                     dispatch(reLoginAction({ username: userReload, reloginCode: data.data.RE_LOGIN_CODE }));
@@ -111,6 +118,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     setSelectedUser(getUserSelected);
                     setSelectedUserType(Number(getUserType()));
 
+                    //hien thi lai tin nhan voi nguoi dung truoc do cua khung chat
                     if (selectedUser) {
                         if (selectedUserType === 0) {
                             wsService.getPeopleChatMessages(selectedUser, 1);
@@ -120,6 +128,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     }
                 } else if (data.event === "RE_LOGIN" && data.status !== "success") {
                     console.log('Re-login failed:', data.mes);
+                    alert('Re-login failed:');
                 }
             });
         } else {

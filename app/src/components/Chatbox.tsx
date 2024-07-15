@@ -20,13 +20,15 @@ interface ChatboxProps {
 }
 
 const Chatbox: FC<ChatboxProps> = ({ messages, username, selectedUser, userStatus }) => {
+    // Tham chiếu đến phần tử cuối cùng của chatbox để cuộn xuống khi có tin nhắn mới
     const chatEndRef = useRef<HTMLDivElement>(null);
+
+    //ham cong them gio de hien thi dung gio hien tai sao khi lay gio tu server
     const addHoursToDate = (date: string, hours: number): string => {
         const result = new Date(date);
         result.setHours(result.getHours() + hours);
         return result.toLocaleString();
     };
-
 
     const scrollToBottom = () => {
         if (chatEndRef.current) {
@@ -38,23 +40,53 @@ const Chatbox: FC<ChatboxProps> = ({ messages, username, selectedUser, userStatu
         scrollToBottom();
     }, [messages]);
 
+    //ham nhom tin nhan theo nguoi gui
+    const groupMessagesByUser = (messages: Message[]) => {
+        const groupedMessages: { user: string; messages: Message[] }[] = [];
+        let currentGroup: { user: string; messages: Message[] } | null = null;
 
-    const renderMessage = (message: Message) => {
-        const convertedMessage = decodeURIComponent(message.mes);
+        messages.forEach(message => {
+            if (currentGroup && currentGroup.user === message.name) {
+                currentGroup.messages.push(message);
+            } else {
+                if (currentGroup) {
+                    groupedMessages.push(currentGroup);
+                }
+                currentGroup = { user: message.name, messages: [message] };
+            }
+        });
 
+        if (currentGroup) {
+            groupedMessages.push(currentGroup);
+        }
+
+        return groupedMessages;
+    };
+
+    //ham hien tin nhan sau khi duoc nhom
+    const renderMessageGroup = (group: { user: string; messages: Message[] }) => {
+        const isCurrentUser = group.user === username;
         return (
-            <div key={message.id} className={`message-box ${message.name === username ? "my-message" : "other-message"}`}>
-
-                    <div className={`message-info ${message.name === username ? "my-message" : "other-message"}`}>
-                        <span className="message-sender">{message.name}</span>
-                        <span className="message-time">{addHoursToDate(message.createAt, 7)}</span>
+            <div key={group.messages[0].id} className={`message-group ${isCurrentUser ? "my-message-group" : "other-message-group"}`}>
+                <div className="message-box">
+                    <div className={`message-info ${isCurrentUser ? "my-message" : "other-message"}`}>
+                        <span className="message-sender">{group.user}</span>
+                        <span className="message-time">{addHoursToDate(group.messages[0].createAt, 7)}</span>
                     </div>
-                <div className={`message ${message.name === username ? "my-message" : "other-message"}`}>
-                    {convertedMessage}
+                    {group.messages.map(message => {
+                        const convertedMessage = decodeURIComponent(message.mes);
+                        return (
+                            <div key={message.id} className={`message ${isCurrentUser ? "my-message" : "other-message"}`}>
+                                {convertedMessage}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         );
     };
+
+    const groupedMessages = groupMessagesByUser(messages);
 
     return (
         <div>
@@ -74,7 +106,7 @@ const Chatbox: FC<ChatboxProps> = ({ messages, username, selectedUser, userStatu
             </div>
             <div className="chatbox-container">
                 <div className="chatbox">
-                    {messages.map(renderMessage)}
+                    {groupedMessages.map(renderMessageGroup)}
                     <div ref={chatEndRef} />
                 </div>
             </div>
