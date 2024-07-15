@@ -1,4 +1,3 @@
-
 :root {
     --b-0: rgba(255, 255, 255, 1);
     --paragraph: rgba(123, 129, 140, 1);
@@ -51,6 +50,17 @@ p {
 .input-message-container {
     padding: 10px 0;
 
+}
+.message-group {
+    margin-bottom: 20px;
+}
+
+.my-message-group {
+    text-align: right;
+}
+
+.other-message-group {
+    text-align: left;
 }
 
 .message {
