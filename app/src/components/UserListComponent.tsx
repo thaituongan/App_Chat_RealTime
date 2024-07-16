@@ -52,6 +52,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         if (newRoomName.trim() !== '') {
             wsService.createRoom(newRoomName);
             setNewRoomName('')
+            setSearchQuery('')
             wsService.getUserList(); // cap  user list
         }
         else {
@@ -63,6 +64,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         if (newRoomName.trim() !== '') {
             wsService.joinRoom(newRoomName);
             setNewRoomName('')
+            setSearchQuery('')
             wsService.getUserList(); // cap nhat user list
         }
     };
