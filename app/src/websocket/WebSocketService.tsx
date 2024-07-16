@@ -165,7 +165,7 @@ class WebSocketService {
         });
     }
 
-    createRoom(name: string) {
+    createRoom(name: string, onSuccess: () => void, onError: (error: any) => void) {
         this.sendMessage({
             action: "onchat",
             data: {
@@ -175,14 +175,34 @@ class WebSocketService {
                 }
             }
         });
+
+        this.onMessage((data: any) => {
+            if (data.event === "CREATE_ROOM") {
+                if (data.status === "success") {
+                    onSuccess();
+                } else {
+                    onError(data);
+                }
+            }
+        });
     }
 
-    joinRoom(roomName: string) {
+    joinRoom(roomName: string, onSuccess: () => void, onError: (error: any) => void) {
         this.sendMessage({
             action: "onchat",
             data: {
                 event: "JOIN_ROOM",
                 data: { name: roomName }
+            }
+        });
+
+        this.onMessage((data: any) => {
+            if (data.event === "JOIN_ROOM") {
+                if (data.status === "success") {
+                    onSuccess();
+                } else {
+                    onError(data);
+                }
             }
         });
     }
@@ -198,3 +218,4 @@ class WebSocketService {
 }
 
 export default WebSocketService;
+

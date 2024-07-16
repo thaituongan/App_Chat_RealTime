@@ -42,7 +42,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     mes: decodeURIComponent(msg.mes)
                 }));
                 dispatch(setChatMessages(decodedMessages.reverse()));
-                return;
             }
             else if (data.event === "GET_ROOM_CHAT_MES" && data.status === "success") {
                 const decodedMessages = data.data.chatData.map((msg: any) => ({
@@ -50,7 +49,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     mes: decodeURIComponent(msg.mes)
                 }));
                 dispatch(setChatMessages(decodedMessages.reverse()));
-                return;
             }
             //xu li gui tin nhan
             else if (data.event === "SEND_CHAT" && data.status === "success") {
@@ -58,14 +56,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 if (selectedUser) {
                     if (selectedUserType === 0) {
                         wsService.getPeopleChatMessages(selectedUser, 1);
-                        return;
                     } else if (selectedUserType === 1) {
                         wsService.getRoomChatMessages(selectedUser, 1);
-                        return;
                     }
-
                 }
-
             }
             //xu li lay danh sach user
             else if (data.event === "GET_USER_LIST" && data.status === "success") {
@@ -76,13 +70,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 if (data.status === "success") {
                     console.log(`Joined room ${data.data.name}`);
                     setSelectedUser(data.data.name);
-                    setSelectedUserType(1);
-                    return
-                } else {
-                    alert(`Failed to join room: ${data.mes}`);
+                    setSelectedUserType(1)
+                    return;
                 }
             }
-
             //xu li tao phong
             else if (data.event === "CREATE_ROOM") {
                 if (data.status === "success") {
@@ -90,8 +81,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     setSelectedUser(data.data.name);
                     setSelectedUserType(1);
                     return;
-                } else {
-                    alert(`Failed to create room: ${data.mes}`);
                 }
             }
             //xu li check trang thai hoat dong cua user
@@ -156,8 +145,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 wsService.getRoomChatMessages(selectedUser, 1);
             }
         }
-    }, [selectedUser, selectedUserType, wsService]);
-
+    }, [ wsService,selectedUser, selectedUserType]);
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '' && selectedUser) {
             const encodedMessage = encodeURIComponent(input);
