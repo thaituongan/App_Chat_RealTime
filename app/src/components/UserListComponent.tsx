@@ -40,7 +40,6 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
 
 
         return () => {
-            wsService.getUserList();
         };
     }, [wsService, dispatch]);
 
@@ -52,15 +51,18 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     const handleCreateRoom = () => {
         if (newRoomName.trim() !== '') {
             wsService.createRoom(newRoomName);
-            setNewRoomName('');
+            setNewRoomName('')
             wsService.getUserList(); // cap  user list
+        }
+        else {
+            alert("no creat room")
         }
     };
 
     const handleJoinRoom = () => {
         if (newRoomName.trim() !== '') {
             wsService.joinRoom(newRoomName);
-            setNewRoomName('');
+            setNewRoomName('')
             wsService.getUserList(); // cap nhat user list
         }
     };
@@ -69,12 +71,12 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         setFilterType(type);
     };
 
-    const handleRoomNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setNewRoomName(e.target.value);
-    };
-
     const handleSearchQueryChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
+        if (filterType === 1){
+            setNewRoomName(e.target.value);
+        }
+
     };
 
     const filteredUsers = users && Array.isArray(users) ? users.filter(user =>
@@ -133,12 +135,6 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
             <div className="card-body">
                 {filterType === 1 && (
                     <div className="mb-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={newRoomName}
-                            onChange={handleRoomNameChange}
-                        />
                         <div className='group-btn'>
                             <button className="btn btn-outline-primary create-btn mt-2 me-2" onClick={handleCreateRoom}>
                                 Create Room
