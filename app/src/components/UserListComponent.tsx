@@ -13,13 +13,16 @@ interface UserListComponentProps {
 
 const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUserSelect }) => {
     const dispatch = useDispatch();
-    const username = useSelector((state: RootState) => state.user.username)
     const users = useSelector((state: RootState) => state.userList.users);
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
     const [newRoomName, setNewRoomName] = useState<string>('');
     const [filterType, setFilterType] = useState<number | null>(0);
     const [searchQuery, setSearchQuery] = useState<string>('');
-
+    const addHoursToDate = (date: string, hours: number): string => {
+        const result = new Date(date);
+        result.setHours(result.getHours() + hours);
+        return result.toLocaleString();
+    };
     useEffect(() => {
         const handleUserList = (data: any) => {
             if (data.event === "GET_USER_LIST" && data.status === "success") {
@@ -31,14 +34,12 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                 }));
                 dispatch(setUserList(usersWithStatus));
             }
-
         };
 
         wsService.onMessage(handleUserList);
 
 
         return () => {
-            wsService.getUserList();
         };
     }, [wsService, dispatch]);
 
@@ -53,6 +54,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
             setNewRoomName('');
             wsService.getUserList(); // Update user list
             alert('Room created successfully');
+            setSearchQuery('');
         }else {
             alert('Room name cannot be empty');
         }
@@ -64,6 +66,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
             setNewRoomName('');
             wsService.getUserList(); // Update user list
             alert('Room joined successfully');
+            setSearchQuery('');
         }else {
             alert('Room name cannot be empty');
         }
@@ -73,12 +76,12 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
         setFilterType(type);
     };
 
-    const handleRoomNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setNewRoomName(e.target.value);
-    };
-
     const handleSearchQueryChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
+        if (filterType === 1){
+            setNewRoomName(e.target.value);
+        }
+
     };
 
     const filteredUsers = users && Array.isArray(users) ? users.filter(user =>
@@ -137,12 +140,6 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
             <div className="card-body">
                 {filterType === 1 && (
                     <div className="mb-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={newRoomName}
-                            onChange={handleRoomNameChange}
-                        />
                         <div className='group-btn'>
                             <button className="btn btn-outline-primary create-btn mt-2 me-2" onClick={handleCreateRoom}>
                                 Create Room
@@ -165,7 +162,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                                 <FontAwesomeIcon icon={faUserCircle} className="me-xxl-3 fa-home-user fa-2xl" />
                                 <div>
                                     <strong>{user.name}</strong><br />
-                                    <small>{new Date(user.actionTime).toLocaleString()}</small>
+                                    <small>{addHoursToDate(user.actionTime, 7)}</small>
                                 </div>
                             </div>
                         </li>

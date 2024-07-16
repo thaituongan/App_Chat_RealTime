@@ -5,9 +5,6 @@ import ChatComponent from './components/ChatComponent';
 import WebSocketService from './websocket/WebSocketService';
 import RegisterComponent from "./components/RegisterComponent";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 const App: React.FC = () => {
