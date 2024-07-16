@@ -172,7 +172,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                 </div>
             )}
             {suscessMessage && (
-                <div className=" error-message d-flex justify-content-between align-items-center susscess" role="alert">
+                <div className=" success-message d-flex justify-content-between align-items-center" role="alert">
                     <span className="error-text">{suscessMessage}</span>
                     <FontAwesomeIcon icon={faTimes} className="close-icon" onClick={handleOffErrorClick} />
                 </div>

@@ -1,7 +1,8 @@
 :root {
     --b-0: rgba(255, 255, 255, 1);
     --paragraph: rgba(123, 129, 140, 1);
-    --error-color: rgb(37, 176, 101);
+    --error-color: rgba(152, 0, 0, 0.49);
+    --success-color: rgba(13, 128, 15, 0.49);
 }
 
 
@@ -674,6 +675,21 @@ p {
     flex: 1;
     text-align: center;
 }
-.success-message{
+.error-message {
     background-color: var(--error-color);
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: white;
+    text-align: center;
+}
+.success-message{
+    background-color: var(--success-color);
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: white;
+    text-align: center;
 }
