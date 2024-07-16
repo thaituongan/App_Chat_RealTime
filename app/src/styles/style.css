@@ -1,7 +1,7 @@
 :root {
     --b-0: rgba(255, 255, 255, 1);
     --paragraph: rgba(123, 129, 140, 1);
-    --error-color: rgba(108, 30, 30, 0.63);
+    --error-color: rgb(37, 176, 101);
 }
 
 
@@ -673,4 +673,7 @@ p {
 .error-text {
     flex: 1;
     text-align: center;
+}
+.success-message{
+    background-color: var(--error-color);
 }

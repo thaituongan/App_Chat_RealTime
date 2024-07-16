@@ -19,6 +19,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     const [filterType, setFilterType] = useState<number | null>(0);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
+    const [suscessMessage, setSuscessMessage] = useState<string>('');
 
     const addHoursToDate = (date: string, hours: number): string => {
         const result = new Date(date);
@@ -59,13 +60,17 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                     wsService.getUserList();
                     setSearchQuery('');
                     setErrorMessage('');
+                    setSuscessMessage('Create Room Successfully')
                 },
                 (error: any) => {
                     setErrorMessage('Room already exists');
+                    setSuscessMessage('')
+
                 }
             );
         } else {
             setErrorMessage('Room name cannot be empty');
+            setSuscessMessage('')
         }
     };
 
@@ -77,13 +82,16 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                     wsService.getUserList();
                     setSearchQuery('');
                     setErrorMessage('');
+                    setSuscessMessage('Join Room Successfully')
                 },
                 (error: any) => {
-                    setErrorMessage('Room does not exist yet');
+                    setErrorMessage('Room does not exist');
+                    setSuscessMessage('')
                 }
             );
         } else {
             setErrorMessage('Room name cannot be empty');
+            setSuscessMessage('')
         }
     };
 
@@ -125,6 +133,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     };
     const handleOffErrorClick = () => {
         setErrorMessage('');
+        setSuscessMessage('');
     };
 
 
@@ -162,7 +171,12 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                     <FontAwesomeIcon icon={faTimes} className="close-icon" onClick={handleOffErrorClick} />
                 </div>
             )}
-
+            {suscessMessage && (
+                <div className=" error-message d-flex justify-content-between align-items-center susscess" role="alert">
+                    <span className="error-text">{suscessMessage}</span>
+                    <FontAwesomeIcon icon={faTimes} className="close-icon" onClick={handleOffErrorClick} />
+                </div>
+            )}
             <div className="card-body">
                 {filterType === 1 && (
                     <div className="mb-3">
