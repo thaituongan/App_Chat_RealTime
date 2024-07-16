@@ -72,8 +72,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     console.log(`Joined room ${data.data.name}`);
                     setSelectedUser(data.data.name);
                     setSelectedUserType(1);
-                    alert(`Joined room ${data.data.name}`)
-                    return
                 } else {
                     alert(`Failed to join room: ${data.mes}`);
                 }
@@ -84,8 +82,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     console.log(`Created room ${data.data.name}`);
                     setSelectedUser(data.data.name);
                     setSelectedUserType(1);
-                    alert(`Created room ${data.data.name}`)
-                    return;
                 } else {
                     alert(`Failed to create room: ${data.mes}`);
                 }
@@ -142,7 +138,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         return () => {
             wsService.getUserList();
         };
-    }, [wsService, dispatch, selectedUser, selectedUserType]);
+    }, [wsService]);
+    //, dispatch, selectedUser, selectedUserType
 
     useEffect(() => {
         if (selectedUser) {
@@ -152,8 +149,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 wsService.getRoomChatMessages(selectedUser, 1);
             }
         }
-    }, [selectedUser, selectedUserType, wsService]);
-
+    }, [ wsService]);
+    //selectedUser, selectedUserType,
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '' && selectedUser) {
             const encodedMessage = encodeURIComponent(input);

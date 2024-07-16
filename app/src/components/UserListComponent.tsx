@@ -51,21 +51,24 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     const handleCreateRoom = () => {
         if (newRoomName.trim() !== '') {
             wsService.createRoom(newRoomName);
-            setNewRoomName('')
-            setSearchQuery('')
-            wsService.getUserList(); // cap  user list
-        }
-        else {
-            alert("no creat room")
+            setNewRoomName('');
+            wsService.getUserList(); // Update user list
+            alert('Room created successfully');
+            setSearchQuery('');
+        }else {
+            alert('Room name cannot be empty');
         }
     };
 
     const handleJoinRoom = () => {
         if (newRoomName.trim() !== '') {
             wsService.joinRoom(newRoomName);
-            setNewRoomName('')
-            setSearchQuery('')
-            wsService.getUserList(); // cap nhat user list
+            setNewRoomName('');
+            wsService.getUserList(); // Update user list
+            alert('Room joined successfully');
+            setSearchQuery('');
+        }else {
+            alert('Room name cannot be empty');
         }
     };
 
