@@ -54,6 +54,7 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
             setNewRoomName('')
             setSearchQuery('')
             wsService.getUserList(); // cap  user list
+            alert("creat room success")
         }
         else {
             alert("no creat room")
@@ -66,6 +67,9 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
             setNewRoomName('')
             setSearchQuery('')
             wsService.getUserList(); // cap nhat user list
+            alert("join room success")
+        }else { 
+            alert("no join room");
         }
     };
 
