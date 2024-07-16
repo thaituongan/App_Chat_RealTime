@@ -52,6 +52,9 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
             wsService.createRoom(newRoomName);
             setNewRoomName('');
             wsService.getUserList(); // Update user list
+            alert('Room created successfully');
+        }else {
+            alert('Room name cannot be empty');
         }
     };
 
@@ -60,6 +63,9 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
             wsService.joinRoom(newRoomName);
             setNewRoomName('');
             wsService.getUserList(); // Update user list
+            alert('Room joined successfully');
+        }else {
+            alert('Room name cannot be empty');
         }
     };
 

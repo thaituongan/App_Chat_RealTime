@@ -129,8 +129,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         return () => {
             wsService.getUserList();
         };
-    }, [wsService, dispatch, selectedUser, selectedUserType]);
-
+    }, [wsService]);
+        //dispatch, selectedUser, selectedUserType
     useEffect(() => {
         if (selectedUser) {
             if (selectedUserType === 0) {
