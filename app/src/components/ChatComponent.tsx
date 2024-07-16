@@ -42,6 +42,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     mes: decodeURIComponent(msg.mes)
                 }));
                 dispatch(setChatMessages(decodedMessages.reverse()));
+                return;
             }
             else if (data.event === "GET_ROOM_CHAT_MES" && data.status === "success") {
                 const decodedMessages = data.data.chatData.map((msg: any) => ({
@@ -49,7 +50,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     mes: decodeURIComponent(msg.mes)
                 }));
                 dispatch(setChatMessages(decodedMessages.reverse()));
-
+                return;
             }
             //xu li gui tin nhan
             else if (data.event === "SEND_CHAT" && data.status === "success") {
@@ -57,10 +58,14 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 if (selectedUser) {
                     if (selectedUserType === 0) {
                         wsService.getPeopleChatMessages(selectedUser, 1);
+                        return;
                     } else if (selectedUserType === 1) {
                         wsService.getRoomChatMessages(selectedUser, 1);
+                        return;
                     }
+
                 }
+
             }
             //xu li lay danh sach user
             else if (data.event === "GET_USER_LIST" && data.status === "success") {
@@ -72,19 +77,18 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     console.log(`Joined room ${data.data.name}`);
                     setSelectedUser(data.data.name);
                     setSelectedUserType(1);
-                    alert(`Joined room ${data.data.name}`)
                     return
                 } else {
                     alert(`Failed to join room: ${data.mes}`);
                 }
             }
+
             //xu li tao phong
             else if (data.event === "CREATE_ROOM") {
                 if (data.status === "success") {
                     console.log(`Created room ${data.data.name}`);
                     setSelectedUser(data.data.name);
                     setSelectedUserType(1);
-                    alert(`Created room ${data.data.name}`)
                     return;
                 } else {
                     alert(`Failed to create room: ${data.mes}`);
