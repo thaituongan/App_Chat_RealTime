@@ -4,7 +4,7 @@ import { RootState } from '../store/store';
 import { setUserList } from '../reducer/userListSlice';
 import WebSocketService from '../websocket/WebSocketService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faMagnifyingGlass, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import {faArrowRight, faMagnifyingGlass, faTimes, faUserCircle} from '@fortawesome/free-solid-svg-icons';
 
 interface UserListComponentProps {
     wsService: WebSocketService;
@@ -18,11 +18,14 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
     const [newRoomName, setNewRoomName] = useState<string>('');
     const [filterType, setFilterType] = useState<number | null>(0);
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [errorMessage, setErrorMessage] = useState<string>('');
+
     const addHoursToDate = (date: string, hours: number): string => {
         const result = new Date(date);
         result.setHours(result.getHours() + hours);
         return result.toLocaleString();
     };
+
     useEffect(() => {
         const handleUserList = (data: any) => {
             if (data.event === "GET_USER_LIST" && data.status === "success") {
@@ -38,8 +41,8 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
 
         wsService.onMessage(handleUserList);
 
-
         return () => {
+
         };
     }, [wsService, dispatch]);
 
@@ -50,25 +53,37 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
 
     const handleCreateRoom = () => {
         if (newRoomName.trim() !== '') {
-            wsService.createRoom(newRoomName);
-            setNewRoomName('');
-            wsService.getUserList(); // Update user list
-            alert('Room created successfully');
-            setSearchQuery('');
-        }else {
-            alert('Room name cannot be empty');
+            wsService.createRoom(newRoomName,
+                () => {
+                    setNewRoomName('');
+                    wsService.getUserList();
+                    setSearchQuery('');
+                    setErrorMessage('');
+                },
+                (error: any) => {
+                    setErrorMessage('Room already exists');
+                }
+            );
+        } else {
+            setErrorMessage('Room name cannot be empty');
         }
     };
 
     const handleJoinRoom = () => {
         if (newRoomName.trim() !== '') {
-            wsService.joinRoom(newRoomName);
-            setNewRoomName('');
-            wsService.getUserList(); // Update user list
-            alert('Room joined successfully');
-            setSearchQuery('');
-        }else {
-            alert('Room name cannot be empty');
+            wsService.joinRoom(newRoomName,
+                () => {
+                    setNewRoomName('');
+                    wsService.getUserList();
+                    setSearchQuery('');
+                    setErrorMessage('');
+                },
+                (error: any) => {
+                    setErrorMessage('Room does not exist yet');
+                }
+            );
+        } else {
+            setErrorMessage('Room name cannot be empty');
         }
     };
 
@@ -108,6 +123,10 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
             addTemporaryUser();
         }
     };
+    const handleOffErrorClick = () => {
+        setErrorMessage('');
+    };
+
 
     return (
         <div className="user-list card">
@@ -137,6 +156,13 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                     </button>
                 </div>
             </div>
+            {errorMessage && (
+                <div className=" error-message d-flex justify-content-between align-items-center" role="alert">
+                    <span className="error-text">{errorMessage}</span>
+                    <FontAwesomeIcon icon={faTimes} className="close-icon" onClick={handleOffErrorClick} />
+                </div>
+            )}
+
             <div className="card-body">
                 {filterType === 1 && (
                     <div className="mb-3">
@@ -148,7 +174,6 @@ const UserListComponent: React.FC<UserListComponentProps> = ({ wsService, onUser
                                 Join Room
                             </button>
                         </div>
-
                     </div>
                 )}
                 <ul className="list-group">

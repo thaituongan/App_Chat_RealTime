@@ -49,7 +49,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     mes: decodeURIComponent(msg.mes)
                 }));
                 dispatch(setChatMessages(decodedMessages.reverse()));
-
             }
             //xu li gui tin nhan
             else if (data.event === "SEND_CHAT" && data.status === "success") {
@@ -71,9 +70,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 if (data.status === "success") {
                     console.log(`Joined room ${data.data.name}`);
                     setSelectedUser(data.data.name);
-                    setSelectedUserType(1);
-                } else {
-                    alert(`Failed to join room: ${data.mes}`);
+                    setSelectedUserType(1)
+                    return;
                 }
             }
             //xu li tao phong
@@ -82,8 +80,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     console.log(`Created room ${data.data.name}`);
                     setSelectedUser(data.data.name);
                     setSelectedUserType(1);
-                } else {
-                    alert(`Failed to create room: ${data.mes}`);
+                    return;
                 }
             }
             //xu li check trang thai hoat dong cua user
@@ -138,8 +135,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
         return () => {
             wsService.getUserList();
         };
-    }, [wsService]);
-    //, dispatch, selectedUser, selectedUserType
+    }, [wsService, dispatch, selectedUser, selectedUserType]);
 
     useEffect(() => {
         if (selectedUser) {
@@ -149,8 +145,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                 wsService.getRoomChatMessages(selectedUser, 1);
             }
         }
-    }, [ wsService]);
-    //selectedUser, selectedUserType,
+    }, [ wsService,selectedUser, selectedUserType]);
     const handleSendMessage = () => {
         if (wsService.isConnected() && input.trim() !== '' && selectedUser) {
             const encodedMessage = encodeURIComponent(input);
