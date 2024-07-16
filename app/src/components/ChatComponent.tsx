@@ -72,6 +72,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     console.log(`Joined room ${data.data.name}`);
                     setSelectedUser(data.data.name);
                     setSelectedUserType(1);
+                    alert(`Joined room ${data.data.name}`)
+                    return
                 } else {
                     alert(`Failed to join room: ${data.mes}`);
                 }
@@ -82,6 +84,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ wsService }) => {
                     console.log(`Created room ${data.data.name}`);
                     setSelectedUser(data.data.name);
                     setSelectedUserType(1);
+                    alert(`Created room ${data.data.name}`)
+                    return;
                 } else {
                     alert(`Failed to create room: ${data.mes}`);
                 }

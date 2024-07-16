@@ -23,10 +23,8 @@ class WebSocketService {
                 this.reLogin(userReload, reloginCode);
             }
         };
-
         this.client.onclose = () => {
             console.log('WebSocket connection closed');
-            //clearReLoginCode();
         };
 
         this.client.onmessage = (event) => {
@@ -196,10 +194,6 @@ class WebSocketService {
                 event: "GET_USER_LIST",
             }
         });
-    }
-
-    setEventHandler(event: string, handler: (data: any) => void) {
-        this.eventHandlers[event] = handler;
     }
 }
 
